@@ -46,23 +46,23 @@ def shape_demo_portfolio(database: Path, *, observed_at: str) -> None:
     """Add realistic consulting context and one visible next-move level."""
     outcomes = {
         "deliver-alder-health-s-market-entry-recommendation": (
-            "work", "red", 1,
+            "work", "high", 1,
             "Recommend which of three fictional launch regions Alder Health should enter first, with reimbursement, channel, and operating assumptions.",
         ),
         "prepare-brightfield-climate-s-investor-narrative": (
-            "work", "red", 1,
+            "work", "high", 1,
             "Turn Brightfield Climate's fictional operating metrics and expansion plan into a credible Series A narrative.",
         ),
         "synthesize-juniper-desk-s-customer-research": (
-            "work", "yellow", 0,
+            "work", "medium", 0,
             "Synthesize twelve fictional customer interviews into product priorities for a B2B support platform.",
         ),
         "grow-maya-s-consulting-practice": (
-            "building", "yellow", 0,
+            "building", "medium", 0,
             "Build a repeatable referral and thought-leadership engine without crowding out client delivery.",
         ),
         "publish-maya-s-first-operator-field-note": (
-            "writing", "yellow", 0,
+            "writing", "medium", 0,
             "Turn one useful lesson from client work into a public field note without exposing confidential context.",
         ),
         "plan-the-chen-family-kyoto-weekend": (

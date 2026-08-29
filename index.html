@@ -3866,7 +3866,7 @@
       {
         id: "alder-health-market-entry",
         cat: "work",
-        urgency: "red",
+        urgency: "high",
         title: "Alder Health market-entry recommendation",
         detail: "Compare three fictional launch regions using reimbursement, channel concentration, and operating assumptions.",
         done: "Done means the client-ready recommendation names one region, its evidence, tradeoff, and next validation step.",
@@ -3876,7 +3876,7 @@
       {
         id: "brightfield-investor-narrative",
         cat: "writing",
-        urgency: "yellow",
+        urgency: "medium",
         title: "Brightfield Climate investor narrative",
         detail: "Turn fictional operating metrics and an expansion plan into a credible ten-slide financing story.",
         done: "Done means a reviewable narrative explains the economics, expansion case, and principal risk.",
@@ -3886,7 +3886,7 @@
       {
         id: "juniper-customer-research",
         cat: "building",
-        urgency: "yellow",
+        urgency: "medium",
         title: "Juniper Desk customer-research synthesis",
         detail: "Synthesize twelve fictional interviews into ranked product priorities for a B2B support platform.",
         done: "Done means a decision memo connects recurring evidence to the top three product choices.",
@@ -6110,8 +6110,8 @@
     }
 
     const urgencyOptions = [
-      { value: "red", label: "High", className: "urgency-high" },
-      { value: "yellow", label: "Medium", className: "urgency-medium" },
+      { value: "high", label: "High", className: "urgency-high" },
+      { value: "medium", label: "Medium", className: "urgency-medium" },
       { value: "low", label: "Low", className: "urgency-low" },
     ];
 
@@ -6127,8 +6127,7 @@
     ];
 
     function normalizeUrgency(value) {
-      const key = String(value || "").toLowerCase().trim();
-      return urgencyOptions.some(option => option.value === key) ? key : "low";
+      return normalizedPriority(value);
     }
 
     function urgencyClass(value) {

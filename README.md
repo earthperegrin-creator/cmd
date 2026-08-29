@@ -93,6 +93,10 @@ import my data, enable connectors, or make external changes. Show me what CMD
 does today, what remains alpha, and whether it fits my workflow.
 ```
 
+The step-by-step [`safe trial`](docs/SAFE-TRIAL.md) separates the fictional
+product walkthrough, the synthetic provider canary, and an empty private
+workspace so you can increase trust deliberately.
+
 ## Set up a private workspace
 
 The agent-native setup asks only three questions: which sources CMD may read,
@@ -147,11 +151,16 @@ designed to ask or block instead of guessing.
 | You are... | Start here |
 |---|---|
 | Trying to understand the product | [Human guide](docs/HUMAN-GUIDE.md) |
+| Checking what is actually shipped | [Public alpha status](docs/STATUS.md) |
+| Moving from demo to a cautious trial | [Safe trial](docs/SAFE-TRIAL.md) |
 | An agent setting CMD up | [Agent setup](docs/AGENT-SETUP.md) |
 | An agent operating with CMD | [Agent integration](docs/AGENT-INTEGRATION.md) |
 | Reviewing the system boundary | [Architecture](docs/ARCHITECTURE.md) |
 | Checking local configuration | [Configuration](docs/CONFIGURATION.md) |
 | Auditing risk and trust | [Security](SECURITY.md) |
+
+Agents can also begin with [`llms.txt`](llms.txt) and the repo-local
+[`cmd` skill](.agents/skills/cmd/SKILL.md).
 
 ## Validate the public boundary
 

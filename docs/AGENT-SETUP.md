@@ -17,6 +17,10 @@ short conversation followed by a deterministic local installation.
 Do not turn setup into a questionnaire. Categories and generic registries have
 safe defaults and remain editable later.
 
+In the public alpha, authorized source paths are stored as consent metadata.
+Setup does not import, index, or mount them into the public worker. Report this
+limit in the final readback so authorization is never mistaken for access.
+
 ## Initialize
 
 Save the confirmed answers to a temporary JSON file outside the repository:
@@ -40,8 +44,9 @@ Use `--agent claude` for Claude Code or `--agent none` when the user wants the
 interface without background execution. Fresh connectors remain disabled.
 
 Successful setup must report the private state directory, profile, database,
-initial outcome count, and browser URL. If setup fails, report the failed check
-and keep the confirmed profile so the user does not need to answer again.
+initial outcome count, browser URL, and the fact that source mounting and
+connectors remain disabled. If setup fails, report the failed check and keep
+the confirmed profile so the user does not need to answer again.
 
 ## Verify
 

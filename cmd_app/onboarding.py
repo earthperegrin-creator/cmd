@@ -11,20 +11,7 @@ from typing import Any
 import cmd_db
 
 
-UNIVERSAL_TOOLS = [
-    {"id": "web", "name": "Web research", "operations": ["web.search", "web.read"], "connection_status": "available"},
-    {"id": "filesystem", "name": "Local files", "operations": ["filesystem.read", "filesystem.write"], "connection_status": "available"},
-    {"id": "gmail", "name": "Gmail", "operations": ["gmail.search", "gmail.read", "gmail.draft", "gmail.send"], "connection_status": "disconnected"},
-    {"id": "calendar", "name": "Calendar", "operations": ["calendar.read", "calendar.create", "calendar.update"], "connection_status": "disconnected"},
-]
-
-UNIVERSAL_SKILLS = [
-    {"id": "research-subject", "name": "Research a subject", "aliases": ["research", "look into"], "outputs": ["research_note"], "approval_policy": "read_only"},
-    {"id": "summarize-sources", "name": "Summarize sources", "aliases": ["summarize"], "outputs": ["summary"], "approval_policy": "read_only"},
-    {"id": "draft-email", "name": "Draft an email", "aliases": ["write a reply", "follow up"], "outputs": ["email_draft"], "approval_policy": "sending requires exact approval"},
-    {"id": "propose-calendar-event", "name": "Propose a calendar event", "aliases": ["schedule", "find a time"], "outputs": ["calendar_proposal"], "approval_policy": "calendar writes require exact approval"},
-    {"id": "update-local-file", "name": "Update a local file", "aliases": ["edit", "revise"], "outputs": ["file_change"], "approval_policy": "workspace only"},
-]
+BUNDLED_REGISTRY_DIR = Path(__file__).resolve().parents[1] / "registries" / "v1"
 
 DEFAULT_POLICY = {
     "autonomy": "balanced",
@@ -85,6 +72,15 @@ def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def bundled_registry(name: str) -> dict[str, Any]:
+    """Load the checked-in universal registry used by both setup and resolution."""
+    path = BUNDLED_REGISTRY_DIR / name
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"bundled registry must be an object: {name}")
+    return payload
+
+
 def seed_outcomes(db_path: Path, outcomes: list[str]) -> int:
     cmd_db.init_db(db_path)
     created = 0
@@ -118,9 +114,9 @@ def initialize_private_layer(state_dir: Path, profile_payload: dict[str, Any], *
     for name in ("actions.jsonl", "results.jsonl", "dispatches.jsonl", "approvals.jsonl", "heartbeats.jsonl", "agent-intakes.jsonl"):
         (state / name).touch(exist_ok=True)
     write_json(state / "profile.json", profile)
-    write_json(state / "registries" / "tools.json", {"schema_version": 1, "tools": UNIVERSAL_TOOLS})
-    write_json(state / "registries" / "skills.json", {"schema_version": 1, "skills": UNIVERSAL_SKILLS})
-    write_json(state / "registries" / "workflows.json", {"schema_version": 1, "workflows": []})
+    write_json(state / "registries" / "tools.json", bundled_registry("tools.json"))
+    write_json(state / "registries" / "skills.json", bundled_registry("skills.json"))
+    write_json(state / "registries" / "workflows.json", bundled_registry("workflows.json"))
     write_json(state / "policy.json", DEFAULT_POLICY)
     settings_path = state / "settings.json"
     if not settings_path.exists():

@@ -2,6 +2,14 @@
 
 This is the short reference for agents operating with CMD.
 
+This document separates the **public-alpha worker contract** from the **target
+control-plane architecture**. The current public worker receives the bounded
+envelope in [`worker-envelope.v1.json`](../schemas/worker-envelope.v1.json) and
+returns [`worker-result.v1.json`](../schemas/worker-result.v1.json). It does not
+yet receive a compiled `JobSpec`, capability lease, brokered connector, or
+independent verifier. See [`STATUS.md`](STATUS.md) before describing a
+capability as live.
+
 ## The Division of Responsibility
 
 An agent provides reasoning, planning, drafting, tool selection, and execution
@@ -50,9 +58,9 @@ whose content or context references are already present. Phrases such as
 "supplied notes" or "the selected file" are not proof that an artifact exists;
 the resolver clarifies unless the corresponding input is explicitly available.
 
-## What an Agent Receives
+## What a full control-plane agent should receive
 
-An agent may receive:
+The target execution path may provide:
 
 - the human request and linked task;
 - the compiled `JobSpec`;
@@ -61,8 +69,10 @@ An agent may receive:
 - the selected Workflow and Skills, Tool grants, and approval state; and
 - instructions for acceptance criteria and reporting artifacts.
 
-The agent should not have to infer the canonical target from an unstructured
-collection of files when CMD can provide a `ContextRef`.
+The current public-alpha worker receives actions, a confirmed profile, local
+policy, and registry descriptions. Registry descriptions are vocabulary, not
+proof of a live connection or grant. The worker must block when the concrete
+input or authority is absent.
 
 ## What an Agent Must Do
 
@@ -148,6 +158,8 @@ For exact field names, allowed state transitions, schema versions, and adapter
 behavior, use the runtime code and schema as authority:
 
 - [`schemas/job-spec.v1.json`](../schemas/job-spec.v1.json)
+- [`schemas/worker-envelope.v1.json`](../schemas/worker-envelope.v1.json)
+- [`schemas/worker-result.v1.json`](../schemas/worker-result.v1.json)
 - [`cmd_runtime/jobspec.py`](../cmd_runtime/jobspec.py)
 - [`cmd_runtime/control.py`](../cmd_runtime/control.py)
 - [`ARCHITECTURE.md`](ARCHITECTURE.md)
@@ -160,6 +172,9 @@ contract.
 CMD's public worker boundary is provider-neutral. Codex and Claude Code are the
 first adapters, but another runtime can be added without changing CMD's work,
 approval, or completion semantics.
+
+This is the executable alpha contract. It is deliberately narrower than the
+target `JobSpec` architecture described above.
 
 ### Boundary
 
@@ -218,6 +233,8 @@ pending action and no other action ID is accepted.
 ```
 
 Allowed statuses are `completed`, `awaiting_approval`, `blocked`, and `failed`.
+`completed` requires a non-empty artifact, decision-relevant conclusion, or
+source evidence in addition to the summary.
 `awaiting_approval` also requires a complete `proposed_operation` object with
 the capability, execution mode, risk level, and exact payload. The adapter must
 not execute that operation.

@@ -15,8 +15,10 @@ from cmd_app import config, lifecycle, onboarding, settings, worker_contract
 from scripts import (
     audit_public_foundation,
     audit_public_snapshot,
+    build_repository_eval_packet,
     build_public_snapshot,
     demo_workspace,
+    task_capture as capture_cli,
     validate_public_snapshot,
 )
 
@@ -52,13 +54,21 @@ class PublicAlphaTests(unittest.TestCase):
             result = onboarding.initialize_private_layer(state, PROFILE, agent="codex")
             profile = json.loads((state / "profile.json").read_text(encoding="utf-8"))
             saved_settings = json.loads((state / "settings.json").read_text(encoding="utf-8"))
+            saved_tools = json.loads((state / "registries" / "tools.json").read_text(encoding="utf-8"))
             outcomes = cmd_db.list_outcomes(state / "cmd.db")
 
         self.assertTrue(result["ok"])
         self.assertEqual(profile["workspace_title"], "Nick in Command")
         self.assertEqual(saved_settings["background_agent"], "codex")
         self.assertFalse(saved_settings["gmail_ingestion_enabled"])
+        self.assertEqual(saved_tools, onboarding.bundled_registry("tools.json"))
         self.assertEqual([item["title"] for item in outcomes], PROFILE["outcomes_90_days"])
+
+    def test_capture_cli_uses_normal_private_state_discovery(self):
+        with tempfile.TemporaryDirectory() as tmpdir, patch.dict(
+            os.environ, {"CMD_STATE_DIR": str(Path(tmpdir) / "state")}, clear=False
+        ):
+            self.assertEqual(capture_cli.default_db_path(), Path(tmpdir) / "state" / "cmd.db")
 
     def test_setup_from_confirmed_profile_is_noninteractive_and_does_not_start_when_requested(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -184,13 +194,20 @@ class PublicAlphaTests(unittest.TestCase):
             {row["category"] for row in roots},
             {"work", "building", "writing", "personal"},
         )
-        self.assertEqual({row["urgency"] for row in roots}, {"red", "yellow", "low"})
+        self.assertEqual({row["urgency"] for row in roots}, {"high", "medium", "low"})
         self.assertFalse(state.exists())
         with self.assertRaises(ValueError):
             demo_workspace.reset_demo_workspace(Path.home())
 
     def test_public_foundation_has_no_private_coupling(self):
         self.assertEqual(audit_public_foundation.violations(), [])
+
+    def test_repository_eval_packet_uses_frozen_persona_and_excludes_prior_reports(self):
+        packet = build_repository_eval_packet.build_packet("agent")
+        self.assertIn("Persona: `agent`", packet)
+        self.assertIn("# Persona 2: ChatGPT scout", packet)
+        self.assertIn("## Surface: `AGENTS.md`", packet)
+        self.assertNotIn("round-00-baseline.md", packet)
 
     def test_public_snapshot_is_allowlisted_complete_and_clean(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -238,9 +255,19 @@ class PublicAlphaTests(unittest.TestCase):
             "dispatch": {"id": "dispatch-1"},
             "actions": [{"id": "action-1"}],
         }
-        raw = 'Provider note.\n```json\n{"schema_version":1,"dispatch_id":"dispatch-1","receipts":[{"action_id":"action-1","status":"completed","summary":"Done"}]}\n```'
+        raw = 'Provider note.\n```json\n{"schema_version":1,"dispatch_id":"dispatch-1","receipts":[{"action_id":"action-1","status":"completed","summary":"Done","conclusion":"The bounded review is complete."}]}\n```'
         receipts = worker_contract.parse_worker_output(raw, envelope)
         self.assertEqual(receipts[0]["status"], "completed")
+
+    def test_generic_worker_contract_rejects_completion_without_evidence(self):
+        envelope = {"dispatch": {"id": "dispatch-1"}, "actions": [{"id": "action-1"}]}
+        raw = json.dumps({
+            "schema_version": 1,
+            "dispatch_id": "dispatch-1",
+            "receipts": [{"action_id": "action-1", "status": "completed", "summary": "Done"}],
+        })
+        with self.assertRaisesRegex(ValueError, "requires an artifact, conclusion, or source evidence"):
+            worker_contract.parse_worker_output(raw, envelope)
 
     def test_generic_worker_contract_rejects_ambiguous_fenced_objects(self):
         envelope = {

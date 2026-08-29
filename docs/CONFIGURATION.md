@@ -22,8 +22,9 @@ public source tree to compile or run tests.
 
 ## Private context
 
-`CMD_CONTEXT_DIR` explicitly mounts a user-approved context directory for a
-background worker. CMD does not discover sibling folders automatically.
+`CMD_CONTEXT_DIR` reserves one user-approved context directory for future
+worker mounting. The current public-alpha worker does not automatically read or
+mount it. CMD never discovers sibling folders automatically.
 
 ## Lifecycle
 
@@ -80,10 +81,10 @@ private-state files.
 | `CMD_STATE_DIR` | `<CMD_HOME>/state` | SQLite, queue ledgers, settings, logs, and receipts |
 | `CMD_WEEKLY_LOG` | auto-detected example | One explicit weekly context file |
 | `CMD_WEEKLY_LOG_ROOT` | `examples/` | Directory searched for an open weekly log |
-| `CMD_CONTEXT_DIR` | unset | Optional private context mounted into workers |
+| `CMD_CONTEXT_DIR` | unset | Reserved explicit context scope; not mounted by the current public worker |
 | `CMD_RESOLVER_REGISTRY_OVERLAY_DIR` | `<state>/resolver-registry/v1` | Optional extension-only local Tool, Skill, and Workflow manifests |
 | `CMD_STARTUP_DB` | `<state>/external/startup.db` | Optional structured company/context database |
-| `CMD_SWEEP_TOOL` | `scripts/sweep.py` | Optional email sweep helper |
+| `CMD_SWEEP_TOOL` | unset | Optional private email-sweep helper path; no helper is bundled |
 | `CMD_USER_EMAIL` | unset | Address used to recognize mail sent directly to the user |
 | `CMD_USER_IDENTITY` | unset | Optional display identity passed to email triage |
 | `CMD_AUTH_TOKEN` | unset | Required authentication secret for a non-loopback bind |
@@ -127,54 +128,21 @@ Tool operations; collisions fail visibly during validation.
 
 ## Registry resolver shadow
 
-Set `CMD_REGISTRY_RESOLVER_SHADOW=1` to observe normal Agent and Task intake.
-An active Resolver Center cohort also enables observation for canonical `$CMD`
-CLI captures launched from an external agent process that does not inherit the
-web server's environment. Only explicit CMD capture surfaces are observed.
-Ordinary conversations and ordinary inbox notes remain outside the corpus.
-
-The submit path appends a bounded envelope only after normal intake succeeds;
-it does not call a model, delay dispatch, alter outcome binding, compile a
-JobSpec, or grant a Tool. Process pending observations separately:
-
-```bash
-python3 scripts/run_registry_resolver_shadow_queue.py
-```
-
-Inspect collection and review progress without running a model:
-
-```bash
-python3 scripts/report_registry_resolver_shadow.py
-```
-
-Only the latest successful model decision for each unique CMD action counts.
-Queued envelopes, superseded reruns, and errors do not. Side-effect flags must
-remain zero. Human review records live privately and must match the exact
-latest shadow ID and result timestamp.
-
-Freeze the current shadow queue before collecting a new holdout:
-
-```bash
-python3 scripts/start_registry_resolver_holdout.py \
-  --cohort-id holdout-02 \
-  --label "Fresh holdout" \
-  --target 25 \
-  --start-number 26
-```
-
-The cohort excludes prior development examples and admits the next unique real
-actions in arrival order. Resolver evaluation continues in parallel with the
-public-alpha foundation; it is not an unbounded launch delay.
+The source contains observation and review building blocks used during private
+dogfood evaluation. The public alpha does not ship the historical corpus or
+operator scripts that process and freeze those holdouts. Keep the feature off
+unless you are extending the public evaluation harness and adding equivalent
+checked-in fixtures, commands, and release evidence.
 
 ## Live Outcome Shaper
 
-Set `CMD_LIVE_OUTCOME_SHAPER=1` only after the local Codex CLI can return a
-structured proposal. The dedicated Agent composer then resolves work before
-any Outcome write: the model may propose `no_capture`, one bounded existing
-Outcome ID, one newly named Outcome, or clarification. Deterministic software
-validates confidence, title quality, category authority, and candidate IDs;
-only the existing verified capture transaction may write SQLite. A model or
-validation failure creates no Outcome and dispatches no worker.
+The source includes an experimental semantic proposal stage for Outcome
+binding. It is disabled in the public alpha and has no newcomer setup path. A
+model may propose `no_capture`, one bounded existing Outcome ID, one newly
+named Outcome, or clarification. Deterministic software validates confidence,
+title quality, category authority, and candidate IDs; only the verified capture
+transaction may write SQLite. A model or validation failure creates no Outcome
+and dispatches no worker.
 
 Each validated proposal is atomically retained under the private state
 directory before mutation. Request retries reuse the same proposal; a request

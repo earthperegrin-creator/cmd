@@ -1,0 +1,48 @@
+# CMD
+
+> Record work once. Let an agent perform bounded work. Review the result,
+> exact approval request, or honest blocker in the same Outcome history.
+
+CMD is a local-first, single-player command center for people who work with
+Codex, Claude Code, ChatGPT, and other AI agents. It is not a team project
+manager or an autonomous company.
+
+## Best fit
+
+- One person managing many client, company, creative, and personal contexts.
+- An agent-native user who wants durable Outcomes instead of scattered chats.
+- Low-risk research, synthesis, review, and drafting with visible artifacts.
+- Exact human approval before consequential external effects.
+
+## Start here
+
+- Human overview: `README.md`
+- Shipped versus target capability matrix: `docs/STATUS.md`
+- Safe evaluation: `docs/SAFE-TRIAL.md`
+- Agent instructions and repo map: `AGENTS.md`
+- Setup contract: `docs/AGENT-SETUP.md`
+- Worker and capture contract: `docs/AGENT-INTEGRATION.md`
+- Product principles: `PRODUCT.md`
+
+## Machine contracts
+
+- Tool, Skill, and Workflow registries: `registries/v1/`
+- Job specification: `schemas/job-spec.v1.json`
+- Public alpha worker input: `schemas/worker-envelope.v1.json`
+- Public alpha worker output: `schemas/worker-result.v1.json`
+- Resolution plan: `schemas/resolution-plan.v1.json`
+- Capability registry: `capabilities/v1/registry.json`
+
+## Safety
+
+Private state stays outside the Git checkout. Source access is opt-in. Fresh
+workers and connectors are disabled. A registry description is not a grant or
+live connection. Exact external effects require exact-payload approval.
+
+## Alpha boundary
+
+The public worker currently receives a bounded alpha envelope and returns typed
+receipts. The complete compiled JobSpec, capability lease, broker, connector,
+and independent-verifier path is target architecture, not a proven live-account
+execution chain. Do not claim otherwise.
+

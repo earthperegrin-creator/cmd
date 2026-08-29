@@ -21,6 +21,17 @@ reports so earlier scores do not become anchors.
 5. Make one coherent improvement pass.
 6. Repeat with the same evaluators and rubric.
 
+Build a report-blind packet with:
+
+```bash
+python3 scripts/build_repository_eval_packet.py human
+python3 scripts/build_repository_eval_packet.py agent
+```
+
+The packet records the commit and working-tree state, freezes the relevant
+persona, includes the intended newcomer surfaces, and excludes every prior
+score report.
+
 A score is evidence, not a release gate. Runtime tests, public-boundary audits,
 and security canaries remain separate release requirements.
 
@@ -38,4 +49,3 @@ and security canaries remain separate release requirements.
 - [`personas/fractional-cmo.md`](personas/fractional-cmo.md): the human buyer and user
 - [`personas/chatgpt-scout.md`](personas/chatgpt-scout.md): the agent searching on her behalf
 - [`reports/`](reports/): one immutable report per round
-
