@@ -11,6 +11,10 @@ import sys
 import tempfile
 from pathlib import Path
 
+# The auditor imports one local helper. Suppress import caches so auditing a
+# pristine checkout cannot create a forbidden __pycache__ entry itself.
+sys.dont_write_bytecode = True
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))

@@ -11,6 +11,10 @@ import sys
 import tempfile
 from pathlib import Path
 
+# Validation imports the auditor. Keep a pristine checkout pristine before the
+# whole-snapshot audit runs.
+sys.dont_write_bytecode = True
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
