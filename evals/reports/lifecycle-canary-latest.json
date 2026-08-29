@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-28T06:08:21+00:00",
+  "generated_at": "2026-08-29T16:39:10+00:00",
   "canary": "disposable_full_local_lifecycle",
   "passed": true,
   "checks": [
@@ -22,7 +22,7 @@
     {
       "name": "doctor",
       "passed": true,
-      "detail": "all required checks pass"
+      "detail": "the server and configured worker path are included in the required checks"
     },
     {
       "name": "durable_user_data",

@@ -116,12 +116,27 @@ def parse_worker_output(raw: str, envelope: dict[str, Any], model: str = "") -> 
                 isinstance(artifact, dict) and any(value not in (None, "", [], {}) for value in artifact.values())
             ) or (isinstance(artifact, str) and bool(artifact.strip()))
             has_conclusion = bool(str(receipt.get("conclusion") or "").strip())
-            has_sources = isinstance(receipt.get("sources"), list) and bool(receipt["sources"])
+            sources = receipt.get("sources")
+            has_sources = isinstance(sources, list) and any(
+                (isinstance(source, str) and bool(source.strip()))
+                or (isinstance(source, dict) and any(value not in (None, "", [], {}) for value in source.values()))
+                for source in sources
+            )
             if not (has_artifact or has_conclusion or has_sources):
                 raise ValueError("completed receipt requires an artifact, conclusion, or source evidence")
         if status == "awaiting_approval":
             operation = receipt.get("proposed_operation")
-            if not isinstance(operation, dict) or not isinstance(operation.get("payload"), dict):
+            payload = operation.get("payload") if isinstance(operation, dict) else None
+            has_material_payload = isinstance(payload, dict) and any(
+                value not in (None, "", [], {}) for value in payload.values()
+            )
+            if (
+                not isinstance(operation, dict)
+                or not str(operation.get("capability") or "").strip()
+                or operation.get("execution_mode") != "execute"
+                or not str(operation.get("risk_level") or "").strip()
+                or not has_material_payload
+            ):
                 raise ValueError("awaiting_approval requires an exact proposed_operation payload")
         row = dict(receipt)
         row.update({"action_id": action_id, "status": status, "summary": summary, "time": now, "model": receipt.get("model") or model or "background-worker"})

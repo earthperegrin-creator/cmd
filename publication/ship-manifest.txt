@@ -1,5 +1,6 @@
 # Explicit source => exported target. Paths are repository-relative.
 .env.example
+.impeccable/design.json
 .agents/skills/cmd/SKILL.md
 .github/ISSUE_TEMPLATE/bug_report.yml
 .github/ISSUE_TEMPLATE/feature_request.yml
@@ -9,6 +10,7 @@ AGENTS.md
 CLAUDE.md
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
+DESIGN.md
 LICENSE
 PRODUCT.md
 PUBLICATION-BOUNDARY.md
@@ -74,6 +76,9 @@ docs/DEMO-WORKSPACE.md
 docs/HUMAN-GUIDE.md
 docs/SAFE-TRIAL.md
 docs/STATUS.md
+docs/assets/ARC-20260830-0020/publish/ARC-20260830-0020-01-one-instruction-three-bays.jpg
+docs/assets/cmd-loop.svg
+docs/assets/cmd-product-overview.jpg
 examples/profile.json
 examples/weekly-log.md
 registries/v1/skills.json
@@ -107,5 +112,6 @@ evals/repository/personas/fractional-cmo.md
 evals/repository/reports/round-00-baseline.md
 evals/repository/reports/round-01-human-story.md
 evals/repository/reports/round-02-agent-entry.md
+evals/repository/reports/round-03-safety-and-visual-proof.md
 llms.txt
 test_public_alpha.py

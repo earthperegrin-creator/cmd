@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 2,
+  "name": "CMD Classic",
+  "description": "The shipped visual system for CMD's local command workspace.",
+  "creativeNorthStar": "The Precision Field Desk",
+  "colors": {
+    "paper": "#f5f7fa",
+    "paper2": "#eef1f5",
+    "panel": "#ffffff",
+    "panel2": "#f7f8fa",
+    "ink": "#17191e",
+    "ink2": "#3e434c",
+    "muted": "#747b86",
+    "line": "#e0e3e8",
+    "line2": "#c9ced6",
+    "signal": "#d96a19",
+    "signalSoft": "#fff1e6",
+    "blue": "#3159c9",
+    "danger": "#b33b2f",
+    "violet": "#7356a8"
+  },
+  "typography": {
+    "body": "Archivo, ui-sans-serif, sans-serif",
+    "display": "Saira Condensed, Archivo, sans-serif",
+    "mono": "JetBrains Mono, ui-monospace, monospace"
+  },
+  "radii": {
+    "record": "1px",
+    "control": "2px"
+  },
+  "shadows": {},
+  "motion": {
+    "fast": "120ms ease",
+    "reducedMotion": "0.01ms"
+  },
+  "breakpoints": {
+    "compact": "760px",
+    "narrow": "390px"
+  },
+  "extensions": {
+    "colorMeta": {
+      "signal": "Exact approval or human attention, never generic excitement.",
+      "blue": "Active or currently executing work.",
+      "danger": "Blocked, stale, failed, or destructive state."
+    },
+    "typographyMeta": {
+      "display": "Compact operational headlines",
+      "body": "Human-readable interface language",
+      "mono": "Machine states, IDs, times, and receipts"
+    }
+  }
+}

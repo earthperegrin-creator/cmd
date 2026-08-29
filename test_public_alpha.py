@@ -86,6 +86,32 @@ class PublicAlphaTests(unittest.TestCase):
         self.assertEqual(result["outcomes_created"], 2)
         self.assertEqual(state_mode, 0o700)
 
+    def test_doctor_requires_the_running_server(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state = Path(tmpdir) / "state"
+            onboarding.initialize_private_layer(state, PROFILE, agent="none")
+            with patch("cmd_app.lifecycle.health", return_value=None):
+                result = lifecycle.doctor(state, "127.0.0.1", 8765)
+
+        checks = {check["name"]: check["ok"] for check in result["checks"]}
+        self.assertFalse(result["ok"])
+        self.assertFalse(checks["server"])
+        self.assertTrue(checks["selected_worker"])
+
+    def test_doctor_requires_the_selected_worker_cli(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state = Path(tmpdir) / "state"
+            onboarding.initialize_private_layer(state, PROFILE, agent="codex")
+            with patch("cmd_app.lifecycle.health", return_value={"ok": True}), patch(
+                "cmd_app.lifecycle.shutil.which", return_value=None
+            ):
+                result = lifecycle.doctor(state, "127.0.0.1", 8765)
+
+        checks = {check["name"]: check["ok"] for check in result["checks"]}
+        self.assertEqual(result["selected_agent"], "codex")
+        self.assertFalse(result["ok"])
+        self.assertFalse(checks["selected_worker"])
+
     def test_backup_restore_round_trip_and_restore_rejects_nonempty_target(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             root = Path(tmpdir)
@@ -269,6 +295,21 @@ class PublicAlphaTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "requires an artifact, conclusion, or source evidence"):
             worker_contract.parse_worker_output(raw, envelope)
 
+    def test_generic_worker_contract_rejects_blank_source_as_completion_evidence(self):
+        envelope = {"dispatch": {"id": "dispatch-1"}, "actions": [{"id": "action-1"}]}
+        raw = json.dumps({
+            "schema_version": 1,
+            "dispatch_id": "dispatch-1",
+            "receipts": [{
+                "action_id": "action-1",
+                "status": "completed",
+                "summary": "Done",
+                "sources": [""],
+            }],
+        })
+        with self.assertRaisesRegex(ValueError, "requires an artifact, conclusion, or source evidence"):
+            worker_contract.parse_worker_output(raw, envelope)
+
     def test_generic_worker_contract_rejects_ambiguous_fenced_objects(self):
         envelope = {
             "dispatch": {"id": "dispatch-1"},
@@ -286,6 +327,26 @@ class PublicAlphaTests(unittest.TestCase):
             "receipts": [{"action_id": "act-1", "status": "awaiting_approval", "summary": "Ready."}],
         })
         with self.assertRaises(ValueError):
+            worker_contract.parse_worker_output(raw, envelope)
+
+    def test_generic_worker_contract_rejects_approval_with_empty_payload(self):
+        envelope = {"dispatch": {"id": "dispatch-test"}, "actions": [{"id": "act-1"}]}
+        raw = json.dumps({
+            "schema_version": 1,
+            "dispatch_id": "dispatch-test",
+            "receipts": [{
+                "action_id": "act-1",
+                "status": "awaiting_approval",
+                "summary": "Ready.",
+                "proposed_operation": {
+                    "capability": "gmail.send",
+                    "execution_mode": "execute",
+                    "risk_level": "external_commit",
+                    "payload": {},
+                },
+            }],
+        })
+        with self.assertRaisesRegex(ValueError, "requires an exact proposed_operation payload"):
             worker_contract.parse_worker_output(raw, envelope)
 
     def test_fresh_background_agent_uses_generic_adapter_but_legacy_settings_remain_private(self):

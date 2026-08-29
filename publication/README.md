@@ -1,5 +1,10 @@
 # CMD
 
+![Status: alpha](https://img.shields.io/badge/status-alpha-d96a19)
+![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3159c9)
+![Local first](https://img.shields.io/badge/data-local--first-17191e)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-7356a8)](LICENSE)
+
 ## Record it once. Let an agent work. Review what came back.
 
 CMD is Google Tasks for the agent age: a local-first command center where a
@@ -11,13 +16,10 @@ three side projects, family logistics, and several AI agents, CMD is designed
 for the part that usually breaks: keeping the work, context, decisions, and
 results connected.
 
-```text
-You record one instruction
-        ↓
-CMD binds it to the right Outcome and gives an agent bounded context
-        ↓
-You receive a result, an exact approval request, or an honest blocker
-```
+![The CMD loop: record one instruction, let an agent work inside bounded context, then review a result or exact approval request.](docs/assets/cmd-loop.svg)
+
+One instruction stays connected to its Outcome, bounded agent work, result, and
+approval boundary.
 
 CMD does not ask you to maintain a second story about your work. You should not
 have to write a to-do, do it somewhere else, then return and tell the to-do app
@@ -71,6 +73,12 @@ plans. Her workspace shows four important states:
 - an outbound email waiting for exact approval;
 - a worker currently in progress; and
 - an honest blocker caused by missing source material.
+
+![The actual CMD Classic alpha showing Maya's day shape, Outcomes, and agent activity.](docs/assets/cmd-product-overview.jpg)
+
+This is the actual CMD Classic alpha running with fictional data. The center
+keeps Maya's Outcomes and Next moves together; the right rail shows agent work,
+receipts, approvals, and blockers.
 
 Every company, person, metric, address, URL, and artifact is fictional. Demo
 state stays isolated in `.cmd-demo/` and cannot touch a normal CMD workspace.
@@ -146,6 +154,18 @@ A prepared action is not the same as a committed effect. A model saying “done�
 is not the same as a verified result. When context or authority is weak, CMD is
 designed to ask or block instead of guessing.
 
+## The philosophy, drawn as a physical system
+
+![Arctic Command concept art showing one person, her context folios, a single instruction, an agent work bay, a finished artifact, and an approval cover.](docs/assets/ARC-20260830-0020/publish/ARC-20260830-0020-01-one-instruction-three-bays.jpg)
+
+The folios are the person's many contexts. One instruction enters a bounded
+agent work bay. A finished artifact returns for review, while the sealed
+external effect remains under an approval cover.
+
+This is concept art in the **Arctic Command** visual language from CMD's skin
+library. It explains the operating philosophy; it is not a screenshot or a
+promise that this skin ships in the current alpha.
+
 ## Pick the shortest useful document
 
 | You are... | Start here |
@@ -157,6 +177,7 @@ designed to ask or block instead of guessing.
 | An agent operating with CMD | [Agent integration](docs/AGENT-INTEGRATION.md) |
 | Reviewing the system boundary | [Architecture](docs/ARCHITECTURE.md) |
 | Checking local configuration | [Configuration](docs/CONFIGURATION.md) |
+| Understanding the shipped visual system | [Design system](DESIGN.md) |
 | Auditing risk and trust | [Security](SECURITY.md) |
 
 Agents can also begin with [`llms.txt`](llms.txt) and the repo-local

@@ -35,7 +35,12 @@
         "human_action": {"type": "string"},
         "sources": {
           "type": "array",
-          "items": {"type": ["string", "object"]}
+          "items": {
+            "oneOf": [
+              {"type": "string", "minLength": 1},
+              {"type": "object", "minProperties": 1}
+            ]
+          }
         },
         "model": {"type": "string"},
         "proposed_operation": {
@@ -45,7 +50,7 @@
             "capability": {"type": "string", "minLength": 1},
             "execution_mode": {"const": "execute"},
             "risk_level": {"type": "string", "minLength": 1},
-            "payload": {"type": "object"}
+            "payload": {"type": "object", "minProperties": 1}
           },
           "additionalProperties": true
         }

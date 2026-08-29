@@ -207,7 +207,14 @@ def execute(*, keep_workspace: bool = False) -> tuple[dict[str, Any], Path]:
 
         doctor = run([*cli, "doctor", "--port", str(port)], cwd=install, env=env, expect_json=True)
         required = {row["name"]: row["ok"] for row in doctor.get("checks") or []}
-        record("doctor", all(required.get(name) for name in ("python", "state", "profile", "database", "server")), "all required checks pass")
+        record(
+            "doctor",
+            doctor.get("ok") is True and all(
+                required.get(name)
+                for name in ("python", "state", "profile", "database", "selected_worker", "server")
+            ),
+            "the server and configured worker path are included in the required checks",
+        )
 
         capture_fictional_outcome(port)
         expected_title = "Prepare the fictional lifecycle client briefing"
