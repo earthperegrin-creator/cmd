@@ -163,6 +163,13 @@ class PublicAlphaTests(unittest.TestCase):
             result = demo_workspace.create_demo_workspace(state)
             saved_settings = json.loads((state / "settings.json").read_text(encoding="utf-8"))
             queue = cmd_db.list_agent_queue(state / "cmd.db")
+            with cmd_db.connect(state / "cmd.db") as conn:
+                roots = conn.execute(
+                    "SELECT category, urgency FROM work_items WHERE parent_item_id IS NULL"
+                ).fetchall()
+                linked_action_count = conn.execute(
+                    "SELECT COUNT(*) FROM actions WHERE item_id IS NOT NULL"
+                ).fetchone()[0]
             demo_workspace.reset_demo_workspace(state)
 
         self.assertTrue(result["created"])
@@ -172,6 +179,12 @@ class PublicAlphaTests(unittest.TestCase):
             {item["state"] for item in queue},
             {"approval", "awaiting_human", "working", "blocked"},
         )
+        self.assertEqual(linked_action_count, 4)
+        self.assertEqual(
+            {row["category"] for row in roots},
+            {"work", "building", "writing", "personal"},
+        )
+        self.assertEqual({row["urgency"] for row in roots}, {"red", "yellow", "low"})
         self.assertFalse(state.exists())
         with self.assertRaises(ValueError):
             demo_workspace.reset_demo_workspace(Path.home())

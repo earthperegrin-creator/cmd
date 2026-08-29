@@ -1545,6 +1545,7 @@
       outline: 2px solid rgba(20, 61, 41, .22);
       outline-offset: 1px;
     }
+    .category-select.category-work { color: #143d29; background-color: #e5f3e9; }
     .category-select.category-deal { color: #1f6b4a; background-color: #dbeee3; }
     .category-select.category-post { color: #245e74; background-color: #dcecf1; }
     .category-select.category-admin { color: #7a5418; background-color: #f4e8cf; }
@@ -3007,6 +3008,7 @@
     .urgency-select.urgency-high { border-color: #dfaaa3; background-color: #fff1ef; color: #8b3027; }
     .urgency-select.urgency-medium { border-color: var(--signal); background-color: var(--signal-soft); color: #7b3100; }
     .urgency-select.urgency-low { border-color: var(--line-2); background-color: var(--panel-2); color: var(--ink-2); }
+    .category-select.category-work { color: #245e74; background-color: #eaf6f8; }
     .category-select.category-deal { color: var(--blue); background-color: #edf1ff; }
     .category-select.category-post { color: #216d7a; background-color: #eaf6f8; }
     .category-select.category-admin { color: #8a3a00; background-color: var(--signal-soft); }
@@ -3795,6 +3797,7 @@
         <div class="panel" style="padding:10px 12px;">
           <div class="mode-tabs">
             <button class="active" data-filter="all">All live</button>
+            <button data-filter="work">Work</button>
             <button data-filter="deal">Deals</button>
             <button data-filter="post">Portfolio</button>
             <button data-filter="admin">Admin</button>
@@ -6113,6 +6116,7 @@
     ];
 
     const categoryOptions = [
+      { value: "work", label: "Work", className: "category-work" },
       { value: "deal", label: "Deals", className: "category-deal" },
       { value: "post", label: "Portfolio", className: "category-post" },
       { value: "admin", label: "Admin", className: "category-admin" },
@@ -6142,12 +6146,12 @@
 
     function normalizeCategory(value) {
       const key = String(value || "").toLowerCase().trim();
-      return categoryOptions.some(option => option.value === key) ? key : "deal";
+      return categoryOptions.some(option => option.value === key) ? key : "work";
     }
 
     function categoryClass(value) {
       const option = categoryOptions.find(row => row.value === normalizeCategory(value));
-      return option ? option.className : "category-deal";
+      return option ? option.className : "category-work";
     }
 
     function renderCategorySelect(task) {
