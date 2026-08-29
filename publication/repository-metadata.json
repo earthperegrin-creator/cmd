@@ -1,0 +1,27 @@
+{
+  "repository_name": "cmd",
+  "product_name": "CMD",
+  "description": "Record what needs to be done once. CMD sends agents to do the work and brings back reviewable results.",
+  "positioning": "Google Tasks for the agent age.",
+  "default_branch": "main",
+  "license": "Apache-2.0",
+  "topics": [
+    "agent-gui",
+    "agentic-workflows",
+    "ai-agents",
+    "ai-task-manager",
+    "ai-todo-list",
+    "claude-code",
+    "codex",
+    "human-in-the-loop",
+    "local-first",
+    "personal-productivity",
+    "python",
+    "task-management"
+  ],
+  "first_release": {
+    "tag": "v0.1.0-alpha.1",
+    "title": "CMD v0.1.0-alpha.1: First public alpha",
+    "prerelease": true
+  }
+}

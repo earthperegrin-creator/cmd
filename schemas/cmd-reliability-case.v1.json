@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "cases"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "1"},
+    "cases": {
+      "type": "array",
+      "minItems": 50,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "category", "prompt", "origin", "task_binding", "required_capabilities", "forbidden_capabilities", "approval", "acceptance_checks", "cleanup", "expected_disposition"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^(0[1-9]|[1-4][0-9]|50)$"},
+          "category": {"enum": ["intent_context_policy", "local_data", "gmail", "calendar", "drive", "web", "compound"]},
+          "prompt": {"type": "string", "minLength": 10},
+          "origin": {"enum": ["global_chat", "task_card", "test"]},
+          "task_binding": {"type": ["string", "null"]},
+          "required_capabilities": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+          "forbidden_capabilities": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+          "approval": {"enum": ["none", "prepare_only", "exact_required", "needs_clarification"]},
+          "acceptance_checks": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "cleanup": {"type": ["string", "null"]},
+          "expected_disposition": {"enum": ["completed", "needs_clarification", "denied", "honestly_blocked"]}
+        }
+      }
+    }
+  }
+}

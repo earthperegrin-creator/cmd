@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cmd.local/schemas/job-spec.v1.json",
+  "$comment": "Executable authority: cmd_runtime/jobspec.py. test_jobspec.py enforces structural parity.",
+  "title": "CMD JobSpec v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "job_id", "created_at", "raw_instruction", "origin",
+    "outcome", "task_binding", "context_refs", "capability_grants",
+    "deliverables", "acceptance_criteria", "approval_policy", "resource_limits",
+    "ambiguity_policy", "idempotency_key", "test_run"
+  ],
+  "properties": {
+    "schema_version": {"const": "1"},
+    "job_id": {"type": "string", "pattern": "^job-[A-Za-z0-9._-]+$"},
+    "created_at": {"type": "string", "minLength": 1},
+    "raw_instruction": {"type": "string", "minLength": 1},
+    "origin": {"enum": ["global_chat", "task_card", "automation", "test"]},
+    "outcome": {"type": "string", "minLength": 1},
+    "task_binding": {"type": ["string", "null"]},
+    "context_refs": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/context_ref"}
+    },
+    "capability_grants": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/capability_grant"}
+    },
+    "forbidden_capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "deliverables": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "acceptance_criteria": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "approval_policy": {"type": "object"},
+    "resource_limits": {"type": "object"},
+    "ambiguity_policy": {"enum": ["block", "use_declared_defaults"]},
+    "idempotency_key": {"type": "string", "minLength": 1},
+    "test_run": {"type": ["object", "null"]},
+    "previous_spec_hash": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "context_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref_id", "kind", "provenance", "locator"],
+      "properties": {
+        "ref_id": {"type": "string", "minLength": 1},
+        "kind": {"type": "string", "minLength": 1},
+        "provenance": {"type": "string", "minLength": 1},
+        "locator": {"type": "string", "minLength": 1},
+        "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "capability_grant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability", "version", "mode"],
+      "properties": {
+        "capability": {"type": "string", "minLength": 1},
+        "version": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["read", "prepare", "commit"]},
+        "selectors": {"type": "object"},
+        "constraints": {"type": "object"},
+        "limits": {"type": "object"},
+        "expires_at": {"type": ["string", "null"]},
+        "approval_required": {"type": "boolean"},
+        "verification_required": {"type": "boolean"},
+        "cleanup_required": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "registry_version": "1",
+  "tools": [
+    {
+      "id": "local-files",
+      "name": "Local files",
+      "description": "Read or write files inside an explicitly granted local scope.",
+      "operations": ["local.read", "local.write"],
+      "version": "1"
+    },
+    {
+      "id": "web",
+      "name": "Web research",
+      "description": "Search and inspect public web sources.",
+      "operations": ["web.search", "web.open"],
+      "version": "1"
+    },
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "description": "Search, read, draft, or send email under explicit grants.",
+      "operations": ["gmail.search", "gmail.read", "gmail.draft", "gmail.send"],
+      "version": "1"
+    },
+    {
+      "id": "calendar",
+      "name": "Calendar",
+      "description": "Inspect calendars or create an approved calendar event.",
+      "operations": ["calendar.list", "calendar.get", "calendar.create"],
+      "version": "1"
+    }
+  ]
+}

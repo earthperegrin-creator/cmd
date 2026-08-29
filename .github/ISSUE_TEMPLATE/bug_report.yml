@@ -1,0 +1,67 @@
+name: Bug report
+description: Report a reproducible CMD problem without including private data.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing CMD. Remove names, messages, credentials, and other private context before submitting.
+  - type: dropdown
+    id: version
+    attributes:
+      label: Version
+      options:
+        - v0.1.0 alpha
+        - main
+        - Unknown
+    validations:
+      required: true
+  - type: dropdown
+    id: runtime
+    attributes:
+      label: Agent runtime
+      options:
+        - Codex
+        - Claude Code
+        - No background agent
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the behavior and the last safe point.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Start CMD with...
+        2. Open...
+        3. Submit...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: macOS version, Python version, browser, and install method.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Sanitized diagnostics
+      description: Paste only output that you have checked for private data and secrets.
+      render: shell

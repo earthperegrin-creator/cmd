@@ -1,0 +1,9 @@
+{
+  "first_name": "Nick",
+  "summary": "Builds products with coding agents.",
+  "authorized_sources": [],
+  "outcomes_90_days": [
+    "Ship the first useful product alpha",
+    "Interview ten users"
+  ]
+}

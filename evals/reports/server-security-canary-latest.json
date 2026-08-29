@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-28T06:21:42+00:00",
+  "canary": "adversarial_local_server_trust_boundary",
+  "passed": true,
+  "checks": [
+    {
+      "name": "intended_routes",
+      "passed": true,
+      "detail": "application shell and intended API are served"
+    },
+    {
+      "name": "security_headers",
+      "passed": true,
+      "detail": "responses disable sniffing, referrers, framing, and caching"
+    },
+    {
+      "name": "get_allowlist",
+      "passed": true,
+      "detail": "GET cannot fetch state, Git, source, or traversal paths"
+    },
+    {
+      "name": "head_allowlist",
+      "passed": true,
+      "detail": "HEAD cannot reveal repository files or path metadata"
+    },
+    {
+      "name": "host_header_guard",
+      "passed": true,
+      "detail": "loopback rejects a non-local Host header without authentication"
+    },
+    {
+      "name": "origin_guard",
+      "passed": true,
+      "detail": "cross-origin mutations are rejected before routing"
+    },
+    {
+      "name": "non_loopback_default_deny",
+      "passed": true,
+      "detail": "non-loopback startup fails without an explicit token"
+    },
+    {
+      "name": "authenticated_non_loopback",
+      "passed": true,
+      "detail": "non-loopback requests require the exact configured token"
+    },
+    {
+      "name": "authenticated_origin_guard",
+      "passed": true,
+      "detail": "authentication does not bypass mutation-origin validation"
+    },
+    {
+      "name": "external_effect_approval",
+      "passed": true,
+      "detail": "external execution remains blocked while preparation may run"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["candidates"],
+  "properties": {
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "message_id",
+          "actionable",
+          "relationship",
+          "existing_item_id",
+          "title",
+          "sender_intent",
+          "context",
+          "recommended_next_step",
+          "category",
+          "priority",
+          "confidence",
+          "why"
+        ],
+        "properties": {
+          "message_id": { "type": "string" },
+          "actionable": { "type": "boolean" },
+          "relationship": {
+            "type": "string",
+            "enum": ["new_outcome", "continuation", "none"]
+          },
+          "existing_item_id": { "type": "string" },
+          "title": { "type": "string" },
+          "sender_intent": { "type": "string" },
+          "context": { "type": "string" },
+          "recommended_next_step": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["deal", "post", "comms", "admin", "building", "networking", "writing", "personal"]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "why": { "type": "string" }
+        }
+      }
+    }
+  }
+}

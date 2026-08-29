@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-28T05:01:02+00:00",
+  "canary": "fictional_consultant_segment_recommendation",
+  "passed": true,
+  "results": [
+    {
+      "provider": "codex",
+      "passed": true,
+      "checks": {
+        "process_succeeded": true,
+        "one_receipt": true,
+        "completed": true,
+        "recommended_segment_b": true,
+        "artifact_or_conclusion": true,
+        "no_external_operation": true
+      },
+      "receipt": {
+        "action_id": "act-public-worker-canary",
+        "status": "completed",
+        "summary": "Recommended Segment B as the fictional client’s first market segment.",
+        "conclusion": "Segment B offers the strongest launch economics: a $32k annual contract, 45-day sales cycle, and 94% pilot retention outweigh its smaller pool of 75 reachable accounts.",
+        "artifact": {
+          "type": "decision_memo",
+          "title": "First Market Segment Recommendation",
+          "recommended_segment": "Segment B",
+          "memo": "Recommend Segment B. It combines the highest annual contract value ($32k), strongest pilot retention (94%), and a relatively short 45-day sales cycle. Its retention-adjusted reachable contract value is approximately $2.26M (75 × $32k × 94%), versus $1.77M for Segment A and $1.34M for Segment C. The main tradeoff is the smallest reachable account pool, which limits initial market breadth and may constrain growth after early wins. Next validation step: run five structured buyer interviews with representative Segment B accounts to confirm willingness to pay $32k and identify any integration requirements that could undermine the 45-day sales cycle."
+        },
+        "needs_human_review": false,
+        "sources": [
+          {
+            "title": "Fictional client segment briefing",
+            "path": "briefing.md",
+            "scope": "Sole authorized source for account reach, contract value, sales cycle, pilot retention, and integration effort."
+          }
+        ],
+        "model": "gpt-5",
+        "time": "2026-08-28T05:00:34+00:00"
+      },
+      "returncode": 0,
+      "stdout_tail": "{\"schema_version\":1,\"dispatch_id\":\"dispatch-public-codex-canary\",\"receipts\":[{\"action_id\":\"act-public-worker-canary\",\"status\":\"completed\",\"summary\":\"Recommended Segment B as the fictional client’s first market segment.\",\"conclusion\":\"Segment B offers the strongest launch economics: a $32k annual contract, 45-day sales cycle, and 94% pilot retention outweigh its smaller pool of 75 reachable accounts.\",\"artifact\":{\"type\":\"decision_memo\",\"title\":\"First Market Segment Recommendation\",\"recommended_segment\":\"Segment B\",\"memo\":\"Recommend Segment B. It combines the highest annual contract value ($32k), strongest pilot retention (94%), and a relatively short 45-day sales cycle. Its retention-adjusted reachable contract value is approximately $2.26M (75 × $32k × 94%), versus $1.77M for Segment A and $1.34M for Segment C. The main tradeoff is the smallest reachable account pool, which limits initial market breadth and may constrain growth after early wins. Next validation step: run five structured buyer interviews with representative Segment B accounts to confirm willingness to pay $32k and identify any integration requirements that could undermine the 45-day sales cycle.\"},\"needs_human_review\":false,\"sources\":[{\"title\":\"Fictional client segment briefing\",\"path\":\"briefing.md\",\"scope\":\"Sole authorized source for account reach, contract value, sales cycle, pilot retention, and integration effort.\"}],\"model\":\"gpt-5\"}]}\n",
+      "stderr_tail": ": 120 reachable accounts, $18k annual contract, 90-day sales cycle,\n  82% pilot retention, high integration effort.\n- Segment B: 75 reachable accounts, $32k annual contract, 45-day sales cycle,\n  94% pilot retention, medium integration effort.\n- Segment C: 210 reachable accounts, $9k annual contract, 30-day sales cycle,\n  71% pilot retention, low integration effort.\n\nChoose one segment. Explain the strongest evidence, the main tradeoff, and one\nnext validation step. All facts are fictional and no external research is\nneeded or authorized.\n\ncodex\n{\"schema_version\":1,\"dispatch_id\":\"dispatch-public-codex-canary\",\"receipts\":[{\"action_id\":\"act-public-worker-canary\",\"status\":\"completed\",\"summary\":\"Recommended Segment B as the fictional client’s first market segment.\",\"conclusion\":\"Segment B offers the strongest launch economics: a $32k annual contract, 45-day sales cycle, and 94% pilot retention outweigh its smaller pool of 75 reachable accounts.\",\"artifact\":{\"type\":\"decision_memo\",\"title\":\"First Market Segment Recommendation\",\"recommended_segment\":\"Segment B\",\"memo\":\"Recommend Segment B. It combines the highest annual contract value ($32k), strongest pilot retention (94%), and a relatively short 45-day sales cycle. Its retention-adjusted reachable contract value is approximately $2.26M (75 × $32k × 94%), versus $1.77M for Segment A and $1.34M for Segment C. The main tradeoff is the smallest reachable account pool, which limits initial market breadth and may constrain growth after early wins. Next validation step: run five structured buyer interviews with representative Segment B accounts to confirm willingness to pay $32k and identify any integration requirements that could undermine the 45-day sales cycle.\"},\"needs_human_review\":false,\"sources\":[{\"title\":\"Fictional client segment briefing\",\"path\":\"briefing.md\",\"scope\":\"Sole authorized source for account reach, contract value, sales cycle, pilot retention, and integration effort.\"}],\"model\":\"gpt-5\"}]}\ntokens used\n20,807\n"
+    },
+    {
+      "provider": "claude",
+      "passed": true,
+      "checks": {
+        "process_succeeded": true,
+        "one_receipt": true,
+        "completed": true,
+        "recommended_segment_b": true,
+        "artifact_or_conclusion": true,
+        "no_external_operation": true
+      },
+      "receipt": {
+        "action_id": "act-public-worker-canary",
+        "status": "completed",
+        "summary": "Read briefing.md and produced a decision memo recommending Segment B, with evidence, tradeoff, and a next validation step.",
+        "conclusion": "Recommend Segment B: highest total addressable value (~$2.4M ARR across 75 accounts), best pilot retention (94%), and a fast 45-day sales cycle at medium integration effort. Main tradeoff: smallest reachable account pool (75) versus Segment A (120) and Segment C (210), capping near-term scale. Next step: pilot 10-15 of the 75 reachable accounts to confirm the 45-day cycle and 94% retention hold before full commitment.",
+        "artifact": {
+          "type": "decision_memo",
+          "content": "# Segment Decision Memo\n\n## Recommendation\nLaunch Segment B.\n\n## Evidence\n- Highest revenue quality: 75 accounts x $32k = ~$2.4M total addressable ARR, edging out Segment A (~$2.16M) and Segment C (~$1.89M) despite fewer accounts.\n- Best retention by a wide margin: 94% pilot retention vs. 82% (A) and 71% (C), indicating the strongest product-market fit and lowest churn risk once landed.\n- Second-fastest sales cycle (45 days), far faster than Segment A (90 days), giving quicker revenue realization and feedback loops without Segment C's quality tradeoffs.\n- Integration effort is medium — more tractable than Segment A's high effort, while still delivering premium retention.\n\n## Main Tradeoff\nSegment B has the smallest reachable account base (75 vs. 120 for A and 210 for C), which caps near-term scale and revenue ceiling. Segment C offers faster sales cycles (30 days) and 2.8x the reachable accounts, but its 71% retention and $9k contract value make it a lower-quality, higher-churn bet. Segment B trades market breadth for deal quality and durability.\n\n## Next Validation Step\nRun a small pilot cohort (10-15 of the 75 reachable Segment B accounts) to confirm the 45-day sales cycle and 94% retention figures hold at execution before committing full go-to-market resources."
+        },
+        "needs_human_review": false,
+        "sources": [
+          "briefing.md"
+        ],
+        "model": "claude-sonnet-5",
+        "time": "2026-08-28T05:01:02+00:00"
+      },
+      "returncode": 0,
+      "stdout_tail": "gration effort. Main tradeoff: smallest reachable account pool (75) versus Segment A (120) and Segment C (210), capping near-term scale. Next step: pilot 10-15 of the 75 reachable accounts to confirm the 45-day cycle and 94% retention hold before full commitment.\",\n      \"artifact\": {\n        \"type\": \"decision_memo\",\n        \"content\": \"# Segment Decision Memo\\n\\n## Recommendation\\nLaunch Segment B.\\n\\n## Evidence\\n- Highest revenue quality: 75 accounts x $32k = ~$2.4M total addressable ARR, edging out Segment A (~$2.16M) and Segment C (~$1.89M) despite fewer accounts.\\n- Best retention by a wide margin: 94% pilot retention vs. 82% (A) and 71% (C), indicating the strongest product-market fit and lowest churn risk once landed.\\n- Second-fastest sales cycle (45 days), far faster than Segment A (90 days), giving quicker revenue realization and feedback loops without Segment C's quality tradeoffs.\\n- Integration effort is medium — more tractable than Segment A's high effort, while still delivering premium retention.\\n\\n## Main Tradeoff\\nSegment B has the smallest reachable account base (75 vs. 120 for A and 210 for C), which caps near-term scale and revenue ceiling. Segment C offers faster sales cycles (30 days) and 2.8x the reachable accounts, but its 71% retention and $9k contract value make it a lower-quality, higher-churn bet. Segment B trades market breadth for deal quality and durability.\\n\\n## Next Validation Step\\nRun a small pilot cohort (10-15 of the 75 reachable Segment B accounts) to confirm the 45-day sales cycle and 94% retention figures hold at execution before committing full go-to-market resources.\"\n      },\n      \"needs_human_review\": false,\n      \"sources\": [\"briefing.md\"],\n      \"model\": \"claude-sonnet-5\"\n    }\n  ]\n}\n```\n\nNote: I attempted to also save the memo to `segment-decision-memo.md` in the workspace, but file writes are blocked in this session's permission mode, so the memo is delivered only as the artifact above rather than as a saved file.\n",
+      "stderr_tail": ""
+    }
+  ]
+}

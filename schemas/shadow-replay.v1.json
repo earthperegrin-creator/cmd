@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cmd.local/schemas/shadow-replay.v1.json",
+  "$comment": "Executable authority: cmd_runtime/control.py. Replay is pure and must not invoke writers, state, or providers.",
+  "title": "CMD Shadow Replay v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "action_id", "action_hash", "replay_created_at",
+    "legacy", "shadow", "comparison", "effects"
+  ],
+  "properties": {
+    "schema_version": {"const": "1"},
+    "action_id": {"type": "string", "minLength": 1},
+    "action_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "replay_created_at": {"type": "string", "minLength": 1},
+    "legacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "accepts"],
+      "properties": {
+        "status": {"const": "legacy_queued"},
+        "accepts": {"const": true}
+      }
+    },
+    "shadow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status", "would_queue_as", "job_id", "spec_hash",
+        "requested_capabilities", "authorized_tools", "approval_required",
+        "denials", "spec"
+      ],
+      "properties": {
+        "status": {"enum": ["validated", "blocked"]},
+        "would_queue_as": {"type": ["string", "null"]},
+        "job_id": {"type": "string", "pattern": "^job-[A-Za-z0-9._-]+$"},
+        "spec_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "requested_capabilities": {"type": "array", "items": {"type": "string"}},
+        "authorized_tools": {"type": "array", "items": {"type": "string"}},
+        "approval_required": {"type": "boolean"},
+        "denials": {"type": "array", "items": {"type": "object"}},
+        "spec": {"$ref": "job-spec.v1.json"}
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["legacy_accepts", "shadow_accepts", "acceptance_changed", "classification"],
+      "properties": {
+        "legacy_accepts": {"const": true},
+        "shadow_accepts": {"type": "boolean"},
+        "acceptance_changed": {"type": "boolean"},
+        "classification": {"enum": ["preserves_acceptance", "tightened"]}
+      }
+    },
+    "effects": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["side_effect_free", "provider_calls", "legacy_writes", "live_state_writes"],
+      "properties": {
+        "side_effect_free": {"const": true},
+        "provider_calls": {"const": 0},
+        "legacy_writes": {"const": 0},
+        "live_state_writes": {"const": 0}
+      }
+    }
+  }
+}

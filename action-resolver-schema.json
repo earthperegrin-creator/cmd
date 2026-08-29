@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["resolutions"],
+  "properties": {
+    "resolutions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["request_id", "intent", "capability", "target", "execution_mode", "risk_level", "confidence", "negated", "already_done", "reason"],
+        "properties": {
+          "request_id": {"type": "string"},
+          "intent": {
+            "type": "string",
+            "enum": ["task_capture", "local_write", "research", "read_only", "draft", "external_send", "public_post", "calendar_write", "destructive", "decision_support", "ambiguous"]
+          },
+          "capability": {
+            "type": "string",
+            "enum": ["none", "task.create", "local.write", "web.read", "source.read", "callmemo.execute", "gmail.draft", "gmail.send", "linkedin.publish", "calendar.create", "mailbox.mutate", "file.delete"]
+          },
+          "target": {"type": "string"},
+          "execution_mode": {"type": "string", "enum": ["execute", "prepare_only", "needs_clarification"]},
+          "risk_level": {"type": "string", "enum": ["low", "review_artifact", "external_commit", "external_write", "sensitive_workflow", "destructive"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "negated": {"type": "boolean"},
+          "already_done": {"type": "boolean"},
+          "reason": {"type": "string"}
+        }
+      }
+    }
+  }
+}

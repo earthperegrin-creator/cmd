@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-28T06:08:21+00:00",
+  "canary": "disposable_full_local_lifecycle",
+  "passed": true,
+  "checks": [
+    {
+      "name": "fresh_setup",
+      "passed": true,
+      "detail": "created the confirmed fictional Outcomes"
+    },
+    {
+      "name": "private_permissions",
+      "passed": true,
+      "detail": "private state is owner-only"
+    },
+    {
+      "name": "start_and_health",
+      "passed": true,
+      "detail": "server uses the intended private state"
+    },
+    {
+      "name": "doctor",
+      "passed": true,
+      "detail": "all required checks pass"
+    },
+    {
+      "name": "durable_user_data",
+      "passed": true,
+      "detail": "verified a user-created fictional Outcome"
+    },
+    {
+      "name": "consistent_backup",
+      "passed": true,
+      "detail": "backup contains private state and is owner-readable only"
+    },
+    {
+      "name": "stop",
+      "passed": true,
+      "detail": "service stops and reports stopped"
+    },
+    {
+      "name": "restart",
+      "passed": true,
+      "detail": "service restarts against preserved state"
+    },
+    {
+      "name": "repository_move_repair",
+      "passed": true,
+      "detail": "a moved checkout replaces only its own stale server and repairs runtime paths"
+    },
+    {
+      "name": "safe_update",
+      "passed": true,
+      "detail": "backup, fast-forward update, migration, and restart completed"
+    },
+    {
+      "name": "update_preserves_data",
+      "passed": true,
+      "detail": "user Outcome survived update"
+    },
+    {
+      "name": "uninstall_preserves_data",
+      "passed": true,
+      "detail": "uninstall stops services without deleting private data"
+    },
+    {
+      "name": "reinstall_preserves_data",
+      "passed": true,
+      "detail": "reinstall reuses existing Outcomes without duplication"
+    },
+    {
+      "name": "restore",
+      "passed": true,
+      "detail": "backup restores into a fresh runnable workspace"
+    },
+    {
+      "name": "explicit_purge",
+      "passed": true,
+      "detail": "private data deletion occurs only through the explicit purge flag"
+    }
+  ],
+  "errors": []
+}

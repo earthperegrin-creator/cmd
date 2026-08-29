@@ -1,0 +1,6 @@
+# Optional connector and integration dependencies. The local core does not need
+# these packages; install them only when enabling the corresponding connectors.
+google-api-python-client>=2.143.0
+google-auth>=2.33.0
+msal>=1.30.0
+requests>=2.32.0
