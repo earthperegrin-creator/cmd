@@ -12,7 +12,13 @@ from unittest.mock import patch
 import cmd_db
 import server
 from cmd_app import config, lifecycle, onboarding, settings, worker_contract
-from scripts import audit_public_foundation, audit_public_snapshot, build_public_snapshot, demo_workspace
+from scripts import (
+    audit_public_foundation,
+    audit_public_snapshot,
+    build_public_snapshot,
+    demo_workspace,
+    validate_public_snapshot,
+)
 
 
 PROFILE = {
@@ -181,6 +187,19 @@ class PublicAlphaTests(unittest.TestCase):
         self.assertTrue(receipt["ok"])
         self.assertGreater(receipt["file_count"], 50)
         self.assertEqual(problems, [])
+
+    def test_public_validation_staging_excludes_existing_git_metadata(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            source = root / "source"
+            destination = root / "staged"
+            source.mkdir()
+            (source / "README.md").write_text("CMD\n", encoding="utf-8")
+            (source / ".git").mkdir()
+            (source / ".git" / "HEAD").write_text("ref: refs/heads/main\n", encoding="utf-8")
+            validate_public_snapshot.stage_snapshot(source, destination)
+            self.assertTrue((destination / "README.md").exists())
+            self.assertFalse((destination / ".git").exists())
 
     def test_generic_worker_contract_accepts_one_typed_receipt_per_action(self):
         envelope = {

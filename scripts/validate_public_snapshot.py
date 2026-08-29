@@ -22,6 +22,11 @@ if str(ROOT) not in sys.path:
 from scripts.audit_public_snapshot import audit  # noqa: E402
 
 
+def stage_snapshot(source: Path, destination: Path) -> None:
+    """Copy product files without inheriting source-control metadata."""
+    shutil.copytree(source, destination, ignore=shutil.ignore_patterns(".git"))
+
+
 def run(command: list[str], *, cwd: Path, timeout: int = 180) -> dict[str, object]:
     completed = subprocess.run(
         command,
@@ -52,7 +57,7 @@ def validate(snapshot: Path, *, with_providers: bool = False) -> dict[str, objec
 
     with tempfile.TemporaryDirectory(prefix="cmd-public-validation-") as tmpdir:
         staged = Path(tmpdir) / "snapshot"
-        shutil.copytree(source, staged)
+        stage_snapshot(source, staged)
         git_commands = (
             ["git", "init", "-b", "main"],
             ["git", "config", "user.name", "CMD Snapshot Validator"],
