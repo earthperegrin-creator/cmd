@@ -41,7 +41,7 @@ jobs:
       - name: Reject runtime state in Git
         run: |
           set -euo pipefail
-          tracked="$(git ls-files '.cmd' '.daily-[c]ockpit' '*.db' '.env' '.env.*' || true)"
+          tracked="$(git ls-files '.cmd' '.daily-[c]ockpit' '*.db' '.env' '.env.*' ':(exclude).env.example' || true)"
           if [ -n "$tracked" ]; then
             echo "Runtime state or secrets are tracked:"
             echo "$tracked"
