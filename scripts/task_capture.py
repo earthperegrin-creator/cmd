@@ -15,6 +15,7 @@ if str(ROOT) not in sys.path:
 
 import cmd_db  # noqa: E402
 from cmd_app import capture_observation  # noqa: E402
+from cmd_app import config  # noqa: E402
 from cmd_app import task_capture as capture_engine  # noqa: E402
 
 
@@ -35,13 +36,18 @@ def _structured_request(value: str) -> dict[str, object]:
     return parsed
 
 
+def default_db_path() -> Path:
+    """Use the same private-state discovery as setup, server, and workers."""
+    return config.state_dir(ROOT) / "cmd.db"
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Resolve and capture work in CMD's SQLite task store.")
     parser.add_argument("title", nargs="?", help="Exact new-outcome title (legacy compatible form)")
     parser.add_argument(
         "--category",
-        default="personal",
-        choices=("deal", "post", "comms", "auto", "admin", "writing", "networking", "building", "learning", "personal", "trip"),
+        default="work",
+        choices=("work", "deal", "post", "comms", "auto", "admin", "writing", "networking", "building", "learning", "personal", "trip"),
     )
     parser.add_argument("--body", default=None, help="Optional task detail")
     parser.add_argument("--urgency", choices=("low", "medium", "high"), default=None)
@@ -52,7 +58,7 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Canonical structured request as JSON, a JSON file path, or '-' for stdin",
     )
-    parser.add_argument("--db", type=Path, default=ROOT / ".cmd" / "cmd.db")
+    parser.add_argument("--db", type=Path, default=default_db_path())
     args = parser.parse_args(argv)
 
     db_path = args.db.expanduser()

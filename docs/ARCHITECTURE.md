@@ -1,10 +1,15 @@
-# CMD System Map
+# CMD Current and Target System Map
 
 This document is the compact logical map of CMD. It is written for a human who
 wants to understand the system and for an agent or maintainer that needs to
 know where a decision belongs.
 
-## End-to-End Flow
+The end-to-end flow below is the target control plane. The current public worker
+implements a narrower bounded envelope and typed receipt. It does not yet carry
+a compiled JobSpec through lease, broker, provider, and independent verifier.
+See [`STATUS.md`](STATUS.md) for the executable public-alpha boundary.
+
+## Target End-to-End Flow
 
 ```text
 human or native agent
@@ -155,27 +160,13 @@ The local runtime has several kinds of state. They serve different purposes:
 The system should not collapse these into one chat transcript. A transcript is
 useful context, but it is not a reliable execution ledger.
 
-## Resolver Stress Gate
+## Resolver evaluation boundary
 
-Run the checked-in pure replay corpus from the repository root:
-
-```bash
-python3 scripts/stress_context_resolver.py
-```
-
-The gate is fixed at 1,000 labeled cases and runs each case twice. It does not
-start a worker, invoke a model, call a provider, create a queue entry, or write
-live state. It asserts the expected validated or blocked result, checks the
-expected `ContextRef` or denial code, compares both replay records for exact
-determinism, and checks the zero-effect counters. The local catalog paths can
-be overridden with `CMD_STARTUP_DB` and `CMD_PEOPLE_INDEX` or the matching CLI
-flags.
-
-The 2026-08-04 run passed 2,000 replays: 500 validated, 500 blocked, zero model
-tokens, zero provider calls, and zero writes. It took about 101 seconds because
-the current resolver uses a deliberately simple linear scan over the catalog.
-That runtime is acceptable for the current single-player dogfood slice; an
-indexed catalog is the next performance refinement if the catalog grows.
+Resolver libraries and replay structures are checked in under `cmd_runtime/`
+and `schemas/`. The public alpha does not ship the private historical stress
+corpus or its former operator script. Do not cite a historical private replay
+count as public release evidence. Public claims must point to tests and canaries
+present in this repository.
 
 ## Important Invariants
 
@@ -197,10 +188,10 @@ indexed catalog is the next performance refinement if the catalog grows.
 | Task and local runtime | Local CMD state and task-linked actions | Keep task truth separate from execution history |
 | Contract | Versioned `JobSpec` with schema tests | Compile resolved context into every relevant job |
 | Capabilities | Registry, policy, and approval gates | Expand exact selectors and acceptance criteria |
-| Workers | Thin Codex and Claude adapters with shared lifecycle | Keep provider differences out of control logic |
-| External services | Controlled service and provider bridges | Tighten target checks at the effect boundary |
-| Context | Pure resolver plus read-only company/people catalog loader, explicit task/source references, and target checks | Add CMD task/source/policy snapshots and versioned catalog inputs |
-| Testing | Focused runtime tests, shadow replay, and a 1,000-case pure resolver gate | Add historical labeled actions and versioned catalog snapshots |
+| Workers | Codex and Claude adapters with a bounded alpha envelope and typed receipts | Carry a compiled JobSpec and lease through the shared lifecycle |
+| External services | Capability, broker, and adapter building blocks | Wire and prove a connector effect end to end |
+| Context | Resolver and local-context building blocks | Mount only explicitly authorized context into a compiled job |
+| Testing | Focused runtime tests plus lifecycle, worker, and server canaries | Add public labeled replay fixtures and connector verification |
 | Product surface | Single-player browser interface plus native agent sessions | Explain the model clearly to humans and agents |
 
 ## Where to Read the Code

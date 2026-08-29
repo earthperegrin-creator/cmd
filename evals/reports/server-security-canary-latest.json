@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-28T06:21:42+00:00",
+  "generated_at": "2026-08-29T16:39:06+00:00",
   "canary": "adversarial_local_server_trust_boundary",
   "passed": true,
   "checks": [

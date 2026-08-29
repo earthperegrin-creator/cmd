@@ -260,17 +260,36 @@ def status(state: Path, host: str, port: int) -> dict[str, Any]:
 
 def doctor(state: Path, host: str, port: int) -> dict[str, Any]:
     server_health = health(host, port, expected_state=state)
+    saved_settings = read_json(state / "settings.json")
+    selected_agent = str(saved_settings.get("background_agent") or "none").strip().lower()
+    codex_path = shutil.which("codex")
+    claude_path = shutil.which("claude")
+    selected_worker_ok = selected_agent == "none" or (
+        selected_agent == "codex" and codex_path is not None
+    ) or (
+        selected_agent == "claude" and claude_path is not None
+    )
+    selected_worker_detail = {
+        "none": "disabled by choice",
+        "codex": codex_path or "codex not found",
+        "claude": claude_path or "claude not found",
+    }.get(selected_agent, f"unsupported worker: {selected_agent}")
     checks = [
         {"name": "python", "ok": sys.version_info >= (3, 11), "detail": sys.version.split()[0]},
         {"name": "state", "ok": state.exists() and os.access(state, os.W_OK), "detail": str(state.resolve())},
         {"name": "profile", "ok": (state / "profile.json").exists(), "detail": str(state / "profile.json")},
         {"name": "database", "ok": (state / "cmd.db").exists(), "detail": str(state / "cmd.db")},
-        {"name": "codex", "ok": shutil.which("codex") is not None, "detail": shutil.which("codex") or "not found"},
-        {"name": "claude", "ok": shutil.which("claude") is not None, "detail": shutil.which("claude") or "not found"},
+        {"name": "codex", "ok": codex_path is not None, "detail": codex_path or "not found"},
+        {"name": "claude", "ok": claude_path is not None, "detail": claude_path or "not found"},
+        {"name": "selected_worker", "ok": selected_worker_ok, "detail": selected_worker_detail},
         {"name": "server", "ok": server_health is not None, "detail": health_url(host, port)},
     ]
-    required = {"python", "state", "profile", "database"}
-    return {"ok": all(check["ok"] for check in checks if check["name"] in required), "checks": checks}
+    required = {"python", "state", "profile", "database", "selected_worker", "server"}
+    return {
+        "ok": all(check["ok"] for check in checks if check["name"] in required),
+        "selected_agent": selected_agent,
+        "checks": checks,
+    }
 
 
 def backup(state: Path, destination: str = "") -> dict[str, Any]:

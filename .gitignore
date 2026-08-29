@@ -16,3 +16,5 @@ docs/cmd-agent-rebuild/.spacedock-state/
 .coverage
 htmlcov/
 .pytest_cache/
+docs/assets/ARC-*/masters/
+docs/assets/ARC-*/review/

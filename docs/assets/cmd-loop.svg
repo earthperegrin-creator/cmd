@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">CMD turns one recorded instruction into bounded agent work and a reviewable result</title>
+  <desc id="desc">Three connected panels show recording one instruction, an agent working inside an Outcome with bounded context, and a human reviewing a recommendation or exact approval request.</desc>
+  <defs>
+    <pattern id="grid" width="22" height="22" patternUnits="userSpaceOnUse">
+      <path d="M 22 0 L 0 0 0 22" fill="none" stroke="#d9dde4" stroke-width="1"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#17191e"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="520" fill="#f5f7fa"/>
+  <rect width="1200" height="520" fill="url(#grid)"/>
+
+  <g font-family="Archivo, Arial, sans-serif" fill="#17191e">
+    <text x="54" y="57" font-family="Saira Condensed, Archivo, sans-serif" font-size="30" font-weight="600">ONE INSTRUCTION. ONE LINEAGE.</text>
+    <text x="54" y="83" font-size="14" fill="#747b86">The capture, work, result, and approval boundary stay connected.</text>
+
+    <path d="M372 245 H414" stroke="#17191e" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M786 245 H828" stroke="#17191e" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <g transform="translate(54 120)">
+      <path d="M0 0 H290 L310 20 V250 H0 Z" fill="#ffffff" stroke="#17191e" stroke-width="2"/>
+      <rect width="5" height="250" fill="#3159c9"/>
+      <text x="24" y="35" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#3159c9">01  RECORD ONCE</text>
+      <text x="24" y="73" font-family="Saira Condensed, Archivo, sans-serif" font-size="25" font-weight="600">Alder Health</text>
+      <line x1="24" y1="90" x2="282" y2="90" stroke="#c9ced6"/>
+      <text x="24" y="119" font-size="14" font-weight="700">Compare three launch regions.</text>
+      <text x="24" y="143" font-size="14">Recommend one and show the</text>
+      <text x="24" y="165" font-size="14">evidence and tradeoff.</text>
+      <rect x="24" y="190" width="150" height="30" fill="#eef1f5" stroke="#c9ced6"/>
+      <text x="38" y="210" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700">DO NOT SEND</text>
+    </g>
+
+    <g transform="translate(424 104)">
+      <path d="M0 0 H320 L342 22 V282 H0 Z" fill="#17191e" stroke="#17191e" stroke-width="2"/>
+      <text x="24" y="39" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#8fa9ff">02  AGENT WORKS</text>
+      <text x="24" y="78" font-family="Saira Condensed, Archivo, sans-serif" font-size="27" font-weight="600" fill="#ffffff">Bounded, not wandering</text>
+      <line x1="24" y1="96" x2="312" y2="96" stroke="#4d5360"/>
+      <text x="24" y="130" font-family="JetBrains Mono, monospace" font-size="10" fill="#9ea5b1">OUTCOME</text>
+      <text x="132" y="130" font-size="13" fill="#ffffff">Alder Health</text>
+      <text x="24" y="162" font-family="JetBrains Mono, monospace" font-size="10" fill="#9ea5b1">CONTEXT</text>
+      <text x="132" y="162" font-size="13" fill="#ffffff">Only granted sources</text>
+      <text x="24" y="194" font-family="JetBrains Mono, monospace" font-size="10" fill="#9ea5b1">AUTHORITY</text>
+      <text x="132" y="194" font-size="13" fill="#ffffff">Research + draft</text>
+      <rect x="24" y="222" width="288" height="36" fill="#23335f" stroke="#3159c9"/>
+      <circle cx="45" cy="240" r="5" fill="#8fa9ff"/>
+      <text x="61" y="244" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" fill="#ffffff">WORKING · HEARTBEAT FRESH</text>
+    </g>
+
+    <g transform="translate(838 120)">
+      <path d="M0 0 H288 L308 20 V250 H0 Z" fill="#ffffff" stroke="#17191e" stroke-width="2"/>
+      <rect width="5" height="250" fill="#d96a19"/>
+      <text x="24" y="35" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" fill="#d96a19">03  REVIEW RESULT</text>
+      <text x="24" y="73" font-family="Saira Condensed, Archivo, sans-serif" font-size="25" font-weight="600">Recommendation ready</text>
+      <line x1="24" y1="90" x2="280" y2="90" stroke="#c9ced6"/>
+      <text x="24" y="121" font-size="13">Evidence and tradeoff attached.</text>
+      <text x="24" y="145" font-size="13">No external effect occurred.</text>
+      <rect x="24" y="174" width="256" height="49" fill="#fff1e6" stroke="#d96a19"/>
+      <text x="38" y="194" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" fill="#7b3100">EMAIL SEND · APPROVAL REQUIRED</text>
+      <text x="38" y="212" font-size="11" fill="#7b3100">Review the exact message first</text>
+    </g>
+
+    <line x1="54" y1="425" x2="1146" y2="425" stroke="#17191e"/>
+    <text x="54" y="458" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700">TASK TRUTH STAYS LOCAL</text>
+    <text x="399" y="458" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700">EXTERNAL EFFECTS STAY GATED</text>
+    <text x="815" y="458" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700">EVERY STEP KEEPS ONE LINEAGE</text>
+  </g>
+</svg>

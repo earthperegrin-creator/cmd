@@ -271,25 +271,19 @@ as an invisible side effect.
 
 ## Current Product Status
 
-The current repository has the execution contract, capability and approval
-structures, local job state, worker adapters, provider bridges, a replay path,
-and the first implementation of the canonical, read-only context resolver.
+The local Outcome, Work Thread, queue, artifact, blocker, and approval-preview
+model is shipped in the fictional alpha workspace. Codex and Claude public
+adapters can run one synthetic bounded job and return a typed receipt.
 
-The resolver consumes an explicit local context catalog supplied with the
-action or by its caller. A catalog record identifies a company, person, source,
-policy, project, or task with a stable reference, locator, provenance, and
-optional content hash. The resolver does not fetch that data itself. Normal
-dogfood intake now has a separate read-only adapter that builds company and
-people records from the local canonical stores; future adapters can add CMD
-task/source snapshots without changing the resolver.
+The full architecture described in this guide is not yet one live execution
+chain. The public worker does not currently receive a compiled `JobSpec`,
+capability lease, brokered connector, or independent verifier. Authorized
+source paths are recorded consent but are not automatically mounted into the
+worker. Live connector setup is not newcomer-ready.
 
-The intended dogfood workflow remains company-related email drafting, because
-it tests identity resolution, source provenance, approval boundaries, and human
-correction without granting broad write authority.
-
-This document describes the target product shape as well as the current
-implementation. Sections that say "planned" identify work that is not yet a
-complete product guarantee.
+Read the maintained [`public alpha status`](STATUS.md) for a capability-by-
+capability matrix and executable proof. When this guide and that matrix differ,
+the status matrix governs claims about what is shipped.
 
 ## Short Glossary
 

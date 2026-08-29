@@ -59,6 +59,11 @@ def worker_prompt(envelope: dict[str, Any], model: str = "") -> str:
 
 Perform only the actions in the attached dispatch envelope. Use only the context, Tools, Skills, and authority represented there. Do not discover unrelated personal files or grant yourself a missing operation.
 
+This public-alpha envelope is not a compiled JobSpec. Registry entries describe
+the universal vocabulary; they do not prove that a connector is live or that an
+operation is granted. If the envelope lacks the concrete input or executable
+authority needed for a claim, return `blocked`.
+
 Safety contract:
 - Research, analysis, summaries, and reviewable drafts are safe when their sources are authorized.
 - If information or authority is missing, return `blocked` with the precise dependency.
@@ -105,9 +110,33 @@ def parse_worker_output(raw: str, envelope: dict[str, Any], model: str = "") -> 
             raise ValueError("worker returned an unknown or duplicate action_id")
         if status not in ALLOWED_STATUSES or not summary:
             raise ValueError("worker receipt requires an allowed status and summary")
+        if status == "completed":
+            artifact = receipt.get("artifact")
+            has_artifact = (
+                isinstance(artifact, dict) and any(value not in (None, "", [], {}) for value in artifact.values())
+            ) or (isinstance(artifact, str) and bool(artifact.strip()))
+            has_conclusion = bool(str(receipt.get("conclusion") or "").strip())
+            sources = receipt.get("sources")
+            has_sources = isinstance(sources, list) and any(
+                (isinstance(source, str) and bool(source.strip()))
+                or (isinstance(source, dict) and any(value not in (None, "", [], {}) for value in source.values()))
+                for source in sources
+            )
+            if not (has_artifact or has_conclusion or has_sources):
+                raise ValueError("completed receipt requires an artifact, conclusion, or source evidence")
         if status == "awaiting_approval":
             operation = receipt.get("proposed_operation")
-            if not isinstance(operation, dict) or not isinstance(operation.get("payload"), dict):
+            payload = operation.get("payload") if isinstance(operation, dict) else None
+            has_material_payload = isinstance(payload, dict) and any(
+                value not in (None, "", [], {}) for value in payload.values()
+            )
+            if (
+                not isinstance(operation, dict)
+                or not str(operation.get("capability") or "").strip()
+                or operation.get("execution_mode") != "execute"
+                or not str(operation.get("risk_level") or "").strip()
+                or not has_material_payload
+            ):
                 raise ValueError("awaiting_approval requires an exact proposed_operation payload")
         row = dict(receipt)
         row.update({"action_id": action_id, "status": status, "summary": summary, "time": now, "model": receipt.get("model") or model or "background-worker"})

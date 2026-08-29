@@ -15,8 +15,10 @@ from cmd_app import config, lifecycle, onboarding, settings, worker_contract
 from scripts import (
     audit_public_foundation,
     audit_public_snapshot,
+    build_repository_eval_packet,
     build_public_snapshot,
     demo_workspace,
+    task_capture as capture_cli,
     validate_public_snapshot,
 )
 
@@ -52,13 +54,21 @@ class PublicAlphaTests(unittest.TestCase):
             result = onboarding.initialize_private_layer(state, PROFILE, agent="codex")
             profile = json.loads((state / "profile.json").read_text(encoding="utf-8"))
             saved_settings = json.loads((state / "settings.json").read_text(encoding="utf-8"))
+            saved_tools = json.loads((state / "registries" / "tools.json").read_text(encoding="utf-8"))
             outcomes = cmd_db.list_outcomes(state / "cmd.db")
 
         self.assertTrue(result["ok"])
         self.assertEqual(profile["workspace_title"], "Nick in Command")
         self.assertEqual(saved_settings["background_agent"], "codex")
         self.assertFalse(saved_settings["gmail_ingestion_enabled"])
+        self.assertEqual(saved_tools, onboarding.bundled_registry("tools.json"))
         self.assertEqual([item["title"] for item in outcomes], PROFILE["outcomes_90_days"])
+
+    def test_capture_cli_uses_normal_private_state_discovery(self):
+        with tempfile.TemporaryDirectory() as tmpdir, patch.dict(
+            os.environ, {"CMD_STATE_DIR": str(Path(tmpdir) / "state")}, clear=False
+        ):
+            self.assertEqual(capture_cli.default_db_path(), Path(tmpdir) / "state" / "cmd.db")
 
     def test_setup_from_confirmed_profile_is_noninteractive_and_does_not_start_when_requested(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -75,6 +85,32 @@ class PublicAlphaTests(unittest.TestCase):
         self.assertTrue(result["ok"])
         self.assertEqual(result["outcomes_created"], 2)
         self.assertEqual(state_mode, 0o700)
+
+    def test_doctor_requires_the_running_server(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state = Path(tmpdir) / "state"
+            onboarding.initialize_private_layer(state, PROFILE, agent="none")
+            with patch("cmd_app.lifecycle.health", return_value=None):
+                result = lifecycle.doctor(state, "127.0.0.1", 8765)
+
+        checks = {check["name"]: check["ok"] for check in result["checks"]}
+        self.assertFalse(result["ok"])
+        self.assertFalse(checks["server"])
+        self.assertTrue(checks["selected_worker"])
+
+    def test_doctor_requires_the_selected_worker_cli(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            state = Path(tmpdir) / "state"
+            onboarding.initialize_private_layer(state, PROFILE, agent="codex")
+            with patch("cmd_app.lifecycle.health", return_value={"ok": True}), patch(
+                "cmd_app.lifecycle.shutil.which", return_value=None
+            ):
+                result = lifecycle.doctor(state, "127.0.0.1", 8765)
+
+        checks = {check["name"]: check["ok"] for check in result["checks"]}
+        self.assertEqual(result["selected_agent"], "codex")
+        self.assertFalse(result["ok"])
+        self.assertFalse(checks["selected_worker"])
 
     def test_backup_restore_round_trip_and_restore_rejects_nonempty_target(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -163,6 +199,13 @@ class PublicAlphaTests(unittest.TestCase):
             result = demo_workspace.create_demo_workspace(state)
             saved_settings = json.loads((state / "settings.json").read_text(encoding="utf-8"))
             queue = cmd_db.list_agent_queue(state / "cmd.db")
+            with cmd_db.connect(state / "cmd.db") as conn:
+                roots = conn.execute(
+                    "SELECT category, urgency FROM work_items WHERE parent_item_id IS NULL"
+                ).fetchall()
+                linked_action_count = conn.execute(
+                    "SELECT COUNT(*) FROM actions WHERE item_id IS NOT NULL"
+                ).fetchone()[0]
             demo_workspace.reset_demo_workspace(state)
 
         self.assertTrue(result["created"])
@@ -172,12 +215,25 @@ class PublicAlphaTests(unittest.TestCase):
             {item["state"] for item in queue},
             {"approval", "awaiting_human", "working", "blocked"},
         )
+        self.assertEqual(linked_action_count, 4)
+        self.assertEqual(
+            {row["category"] for row in roots},
+            {"work", "building", "writing", "personal"},
+        )
+        self.assertEqual({row["urgency"] for row in roots}, {"high", "medium", "low"})
         self.assertFalse(state.exists())
         with self.assertRaises(ValueError):
             demo_workspace.reset_demo_workspace(Path.home())
 
     def test_public_foundation_has_no_private_coupling(self):
         self.assertEqual(audit_public_foundation.violations(), [])
+
+    def test_repository_eval_packet_uses_frozen_persona_and_excludes_prior_reports(self):
+        packet = build_repository_eval_packet.build_packet("agent")
+        self.assertIn("Persona: `agent`", packet)
+        self.assertIn("# Persona 2: ChatGPT scout", packet)
+        self.assertIn("## Surface: `AGENTS.md`", packet)
+        self.assertNotIn("round-00-baseline.md", packet)
 
     def test_public_snapshot_is_allowlisted_complete_and_clean(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -225,9 +281,34 @@ class PublicAlphaTests(unittest.TestCase):
             "dispatch": {"id": "dispatch-1"},
             "actions": [{"id": "action-1"}],
         }
-        raw = 'Provider note.\n```json\n{"schema_version":1,"dispatch_id":"dispatch-1","receipts":[{"action_id":"action-1","status":"completed","summary":"Done"}]}\n```'
+        raw = 'Provider note.\n```json\n{"schema_version":1,"dispatch_id":"dispatch-1","receipts":[{"action_id":"action-1","status":"completed","summary":"Done","conclusion":"The bounded review is complete."}]}\n```'
         receipts = worker_contract.parse_worker_output(raw, envelope)
         self.assertEqual(receipts[0]["status"], "completed")
+
+    def test_generic_worker_contract_rejects_completion_without_evidence(self):
+        envelope = {"dispatch": {"id": "dispatch-1"}, "actions": [{"id": "action-1"}]}
+        raw = json.dumps({
+            "schema_version": 1,
+            "dispatch_id": "dispatch-1",
+            "receipts": [{"action_id": "action-1", "status": "completed", "summary": "Done"}],
+        })
+        with self.assertRaisesRegex(ValueError, "requires an artifact, conclusion, or source evidence"):
+            worker_contract.parse_worker_output(raw, envelope)
+
+    def test_generic_worker_contract_rejects_blank_source_as_completion_evidence(self):
+        envelope = {"dispatch": {"id": "dispatch-1"}, "actions": [{"id": "action-1"}]}
+        raw = json.dumps({
+            "schema_version": 1,
+            "dispatch_id": "dispatch-1",
+            "receipts": [{
+                "action_id": "action-1",
+                "status": "completed",
+                "summary": "Done",
+                "sources": [""],
+            }],
+        })
+        with self.assertRaisesRegex(ValueError, "requires an artifact, conclusion, or source evidence"):
+            worker_contract.parse_worker_output(raw, envelope)
 
     def test_generic_worker_contract_rejects_ambiguous_fenced_objects(self):
         envelope = {
@@ -246,6 +327,26 @@ class PublicAlphaTests(unittest.TestCase):
             "receipts": [{"action_id": "act-1", "status": "awaiting_approval", "summary": "Ready."}],
         })
         with self.assertRaises(ValueError):
+            worker_contract.parse_worker_output(raw, envelope)
+
+    def test_generic_worker_contract_rejects_approval_with_empty_payload(self):
+        envelope = {"dispatch": {"id": "dispatch-test"}, "actions": [{"id": "act-1"}]}
+        raw = json.dumps({
+            "schema_version": 1,
+            "dispatch_id": "dispatch-test",
+            "receipts": [{
+                "action_id": "act-1",
+                "status": "awaiting_approval",
+                "summary": "Ready.",
+                "proposed_operation": {
+                    "capability": "gmail.send",
+                    "execution_mode": "execute",
+                    "risk_level": "external_commit",
+                    "payload": {},
+                },
+            }],
+        })
+        with self.assertRaisesRegex(ValueError, "requires an exact proposed_operation payload"):
             worker_contract.parse_worker_output(raw, envelope)
 
     def test_fresh_background_agent_uses_generic_adapter_but_legacy_settings_remain_private(self):
