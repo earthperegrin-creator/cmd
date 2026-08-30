@@ -13,9 +13,13 @@ before describing a capability as shipped.
 ### Evaluate CMD for a person
 
 1. Read `README.md`, `docs/STATUS.md`, and `docs/SAFE-TRIAL.md`.
-2. Run only the fictional demo unless the person explicitly asks for setup.
-3. Explain fit, non-fit, shipped behavior, and current limitations separately.
-4. Do not inspect personal files, adjacent repositories, credentials, browser
+2. Treat the `cmd_repository_protocol` in `README.md` as the authority for
+   evaluation, demo permission, demo lifecycle, and the transition to setup.
+3. Do not run the fictional demo unless the person explicitly authorizes it
+   after its local effects are disclosed. Without authorization, assess the
+   repository read-only.
+4. Explain fit, non-fit, shipped behavior, and current limitations separately.
+5. Do not inspect personal files, adjacent repositories, credentials, browser
    state, or existing agent configuration.
 
 ### Set up CMD

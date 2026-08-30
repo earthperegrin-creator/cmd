@@ -9,6 +9,11 @@ it private client context on the first run.
 python3 scripts/demo_workspace.py serve
 ```
 
+This creates or reuses synthetic state in `.cmd-demo/` and holds the current
+terminal while a loopback-only server runs. Wait for
+`Command: http://127.0.0.1:8765/`, then open that URL. Stop the server with
+Ctrl-C when you finish.
+
 Inspect four cases:
 
 1. Alder Health: a reviewable recommendation artifact.
@@ -18,6 +23,12 @@ Inspect four cases:
 
 Do not approve the fictional email. The point is to understand the boundary,
 not to simulate success.
+
+Keep the demo for another visit, or remove only its synthetic state with:
+
+```bash
+python3 scripts/demo_workspace.py reset
+```
 
 ## Level 2: verify your local agent adapter with synthetic work
 
