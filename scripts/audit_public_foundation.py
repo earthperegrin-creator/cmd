@@ -29,6 +29,7 @@ FORBIDDEN = {
     "private organization": re.compile("Dar" + r"win\s+Ventures?", re.IGNORECASE),
     "private workspace": re.compile("ai" + "-sandbox", re.IGNORECASE),
 }
+CANONICAL_REPOSITORY_URL = "https://github.com/" + "earth" + "peregrin-creator/cmd.git"
 
 
 def violations() -> list[str]:
@@ -41,7 +42,12 @@ def violations() -> list[str]:
         text = path.read_text(encoding="utf-8")
         for line_number, line in enumerate(text.splitlines(), 1):
             for label, pattern in FORBIDDEN.items():
-                if pattern.search(line):
+                candidate = (
+                    line.replace(CANONICAL_REPOSITORY_URL, "")
+                    if label == "creator handle"
+                    else line
+                )
+                if pattern.search(candidate):
                     found.append(f"{relative}:{line_number}: {label}")
     tracked = subprocess.run(
         ["git", "ls-files", ".cmd", ".cmd-demo", "*.db", ".env", ".env.*"],

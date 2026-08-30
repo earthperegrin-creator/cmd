@@ -44,6 +44,7 @@ FORBIDDEN_CONTENT = {
     "AWS access key": re.compile(r"\bAKIA[A-Z0-9]{16}\b"),
     "private key": re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
 }
+CANONICAL_REPOSITORY_URL = "https://github.com/" + "earth" + "peregrin-creator/cmd.git"
 FORBIDDEN_PARTS = {".cmd", ".cmd-demo", ".git", "__pycache__", ".pytest_cache"}
 FORBIDDEN_SUFFIXES = {".db", ".sqlite", ".sqlite3", ".log", ".bak", ".backup", ".pem", ".key"}
 MARKDOWN_LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
@@ -126,7 +127,12 @@ def audit(snapshot: Path, manifest_path: Path | None = None) -> list[str]:
                         problems.append(f"{relative}: broken local link: {raw_target}")
             for line_number, line in enumerate(content.splitlines(), 1):
                 for label, pattern in FORBIDDEN_CONTENT.items():
-                    if pattern.search(line):
+                    candidate = (
+                        line.replace(CANONICAL_REPOSITORY_URL, "")
+                        if label == "creator handle"
+                        else line
+                    )
+                    if pattern.search(candidate):
                         problems.append(f"{relative}:{line_number}: {label}")
     return problems
 

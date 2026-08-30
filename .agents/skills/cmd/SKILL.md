@@ -14,10 +14,14 @@ Outcome history.
 ### Evaluate
 
 1. Read `README.md`, `docs/STATUS.md`, and `docs/SAFE-TRIAL.md`.
-2. Run the isolated fictional demo only.
-3. Report who CMD fits, what the alpha proves, what remains target architecture,
+2. Follow the `cmd_repository_protocol` in `README.md` for evaluation, demo
+   permission and lifecycle, output, and any transition to setup.
+3. Do not run the isolated fictional demo without the person's explicit
+   permission after disclosing its local state and loopback-server effects.
+   If permission is absent, continue with a read-only evaluation.
+4. Report who CMD fits, what the alpha proves, what remains target architecture,
    and the safest next step.
-4. Do not inspect personal files, import data, or enable a connector.
+5. Do not inspect personal files, import data, or enable a connector.
 
 ### Set up
 
@@ -77,4 +81,3 @@ typed worker receipt, lifecycle, and loopback-security model. Its public worker
 uses a bounded alpha envelope. The full compiled JobSpec, lease, broker,
 connector, and independent-verifier path is not yet wired end to end for real
 accounts. Read `docs/STATUS.md` for the current matrix.
-

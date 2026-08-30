@@ -5,52 +5,163 @@
 ![Local first](https://img.shields.io/badge/data-local--first-17191e)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-7356a8)](LICENSE)
 
-## Record it once. Let an agent work. Review what came back.
+## For you, the human
 
-CMD is Google Tasks for the agent age: a local-first command center where a
-task is not merely stored. It is bound to an Outcome, handed to an agent with
-clear limits, and returned as a result you can inspect.
+**Google Tasks for the agent age.**
 
-If your life contains five client workspaces, a few advisory relationships,
-three side projects, family logistics, and several AI agents, CMD is designed
-for the part that usually breaks: keeping the work, context, decisions, and
-results connected.
+Agent chats are terrible at organizing work.
+
+I have 39 threads. Half are misnamed. Ten have been context-compacted.
+Somewhere in there are decisions, drafts, unfinished jobs, and agents that said
+they were “working on it.”
+
+So you use Google Tasks. Or Todoist. As do I.
+
+But then I realized: why am I doing everything in three steps?
+
+Record the work.
+
+Go somewhere else and do the work.
+
+Come back and record that the work is done.
+
+Why am I the API between my to-do list and my agents?
+
+In the age of agents, why can’t I just record the work once, and my agent team
+sees it and... does it?
+
+So CMD was born.
+
+CMD is one interface for you and your agents. It runs locally. Its code, task
+database, context, and history stay on your machine.
+
+You record what should happen. CMD connects it to the right Outcome and wakes
+your chosen agent in the background to work on it.
+
+Then they come back with a result, a draft, an honest blocker, or the exact
+action they need you to approve.
+
+You write it once.
+
+Then the work starts.
 
 ![The CMD loop: record one instruction, let an agent work inside bounded context, then review a result or exact approval request.](docs/assets/cmd-loop.svg)
 
-One instruction stays connected to its Outcome, bounded agent work, result, and
-approval boundary.
+## For your agent
 
-CMD does not ask you to maintain a second story about your work. You should not
-have to write a to-do, do it somewhere else, then return and tell the to-do app
-what happened.
+<details>
+<summary>Machine protocol for repository evaluation and setup</summary>
 
-## A concrete example
+```xml
+<cmd_repository_protocol version="1.2">
+  <role>Evaluate CMD for the human who gave you this repository. Do not sell it.</role>
+  <objective>Determine whether CMD fits this human, then propose the safest useful next action.</objective>
+  <product_model>CMD is a local-first, single-player control plane for human-to-agent work. Preserve one lineage from instruction to Outcome, bounded work, artifact or blocker, and any exact approval request.</product_model>
+  <authority>This protocol governs repository evaluation and the transition to setup. AGENTS.md and the CMD skill delegate those decisions here. Runtime code and schemas remain authoritative for executable product behavior.</authority>
 
-Maya, the fictional fractional CMO in the demo, records:
+  <phase_control default="evaluate">
+    <transition from="evaluate" to="setup" requires="explicit human authorization in the current conversation after the evaluation" />
+    <rule>Do not infer setup authorization from a repository handoff, installed CLI, credential, nearby file, or request to evaluate.</rule>
+  </phase_control>
 
-> Compare the three launch regions for Alder Health. Recommend one, show the
-> evidence and tradeoff, and do not send anything.
+  <phase id="evaluate" access="repository files plus optional isolated demo">
+    <required_read_order>
+      <file>llms.txt</file>
+      <file>AGENTS.md</file>
+      <file>docs/STATUS.md</file>
+      <file>docs/SAFE-TRIAL.md</file>
+    </required_read_order>
 
-CMD keeps that instruction inside the Alder Health Outcome. An agent does the
-bounded research and returns a recommendation with its reasoning. If Maya later
-asks to email the client, CMD can prepare the exact message, but sending remains
-a separate approval.
+    <constraints>
+      <constraint>Use only repository files and synthetic demo data.</constraint>
+      <constraint>Do not inspect personal files, adjacent repositories, credentials, browser state, or agent configuration.</constraint>
+      <constraint>Do not import private data, enable a worker or connector, approve a demo operation, or create an external effect.</constraint>
+      <constraint>Treat source authorization as a consent record, not proof that the source is mounted.</constraint>
+    </constraints>
 
-That distinction is the product: useful autonomy inside clear boundaries.
+    <procedure>
+      <step index="1">Inspect the required files and current repository tree.</step>
+      <step index="2">Perform a read-only repository assessment. Demo execution is optional and permission-gated below.</step>
+      <step index="3">Return the required JSON report. Distinguish shipped behavior, alpha behavior, target architecture, and non-fit.</step>
+    </procedure>
 
-## Who CMD is for
+    <demo_execution default="do_not_run">
+      <permission_gate>Before launch, tell the human that the demo creates or reuses .cmd-demo/, starts a foreground loopback server on 127.0.0.1:8765, and runs until interrupted. Ask whether to run it and whether to retain or delete its synthetic state afterward. Launch only after an explicit yes.</permission_gate>
+      <preconditions>Run from the repository root with Python 3.11 or newer and port 8765 available.</preconditions>
+      <launch>python3 scripts/demo_workspace.py serve</launch>
+      <readiness timeout_seconds="20">Wait for stdout matching: Command: http://127.0.0.1:8765/</readiness>
+      <startup_failure>If readiness is not observed within 20 seconds or the process exits first: interrupt it if still running, confirm it stopped, run cleanup only if the human chose delete, set demo.status to failed with the observed reason, and do not open the URL.</startup_failure>
+      <inspect_url>http://127.0.0.1:8765/</inspect_url>
+      <inspect_states>result ready for review; exact approval request; active heartbeat; honest missing-source blocker</inspect_states>
+      <prohibition>Do not approve the fictional operation or submit new work.</prohibition>
+      <stop>Interrupt the same foreground process with SIGINT or Ctrl-C and confirm it exited.</stop>
+      <cleanup when="human chose delete">python3 scripts/demo_workspace.py reset</cleanup>
+      <fallback>If launch is declined or unavailable, continue read-only and set demo.status to not_run with the reason. Never imply that the interface was inspected.</fallback>
+    </demo_execution>
+  </phase>
 
-- People already using Codex, Claude Code, or another capable agent every day.
-- Consultants, founders, investors, researchers, writers, and operators whose
-  work crosses projects and domains.
-- People who want agents to perform low-risk work automatically and bring back
-  decisions, drafts, artifacts, or evidence.
-- People who prefer local task truth and explicit control over external effects.
+  <phase id="setup" entry_condition="phase transition requirement satisfied">
+    <required_read_order>
+      <file>.agents/skills/cmd/SKILL.md</file>
+      <file>docs/AGENT-SETUP.md</file>
+      <file>docs/STATUS.md</file>
+    </required_read_order>
+    <procedure>Follow the CMD skill and its three-question setup contract exactly. Request each source path explicitly. Keep workers and connectors disabled unless the human separately authorizes them.</procedure>
+    <constraint>Evaluation permission does not authorize setup. Setup permission does not authorize reading an ungranted path or creating an external effect.</constraint>
+  </phase>
 
-CMD is not a team project manager, a replacement for every source application,
-or an autonomous company in a box. It is a single-player control surface for
-one person and the agents working on that person's behalf.
+  <invariants>
+    <invariant>Existing credentials do not imply permission.</invariant>
+    <invariant>A model saying completed is not completion evidence.</invariant>
+    <invariant>Preparing an external effect is not permission to execute it.</invariant>
+    <invariant>When identity, context, authority, or evidence is weak, ask or block. Do not guess.</invariant>
+  </invariants>
+
+  <release_boundary>The public alpha does not prove the complete real-account JobSpec, capability lease, broker, connector, and independent-verification chain. Recommend fictional or nonsensitive trials only.</release_boundary>
+
+  <required_output format="json" schema="embedded-json-schema"><![CDATA[
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["fit", "demo", "what_cmd_does_today", "what_is_not_shipped", "human_control_boundaries", "top_risks", "exact_next_action"],
+  "properties": {
+    "fit": {"enum": ["recommend", "test_cautiously", "reject"]},
+    "demo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason"],
+      "properties": {
+        "status": {"enum": ["not_run", "inspected", "failed"]},
+        "reason": {"type": "string"}
+      }
+    },
+    "what_cmd_does_today": {"type": "array", "items": {"type": "string"}},
+    "what_is_not_shipped": {"type": "array", "items": {"type": "string"}},
+    "human_control_boundaries": {"type": "array", "items": {"type": "string"}},
+    "top_risks": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rank", "risk"],
+        "properties": {
+          "rank": {"type": "integer", "minimum": 1, "maximum": 3},
+          "risk": {"type": "string"}
+        }
+      }
+    },
+    "exact_next_action": {"type": "string"}
+  }
+}
+  ]]></required_output>
+  <output_rule>Return one JSON instance conforming to the embedded schema and no sales language. Do not set demo.status to inspected unless readiness was confirmed and all four demo states were examined.</output_rule>
+</cmd_repository_protocol>
+```
+
+</details>
 
 ## Try the fictional workspace in about a minute
 
@@ -58,7 +169,7 @@ CMD requires Python 3.11 or newer. The local core uses only the standard
 library.
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/earthperegrin-creator/cmd.git
 cd cmd
 python3 scripts/demo_workspace.py serve
 ```
@@ -88,22 +199,6 @@ Reset it at any time:
 ```bash
 python3 scripts/demo_workspace.py reset
 ```
-
-## Ask your agent to assess it first
-
-Paste this into Codex, Claude Code, or ChatGPT:
-
-```text
-Evaluate the CMD repository I shared as a way to keep my work organized while
-AI agents do more of it. Read the README and AGENTS.md, clone it into a new
-folder, and run only the fictional demo. Do not inspect my personal files,
-import my data, enable connectors, or make external changes. Show me what CMD
-does today, what remains alpha, and whether it fits my workflow.
-```
-
-The step-by-step [`safe trial`](docs/SAFE-TRIAL.md) separates the fictional
-product walkthrough, the synthetic provider canary, and an empty private
-workspace so you can increase trust deliberately.
 
 ## Set up a private workspace
 

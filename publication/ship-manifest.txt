@@ -113,5 +113,6 @@ evals/repository/reports/round-00-baseline.md
 evals/repository/reports/round-01-human-story.md
 evals/repository/reports/round-02-agent-entry.md
 evals/repository/reports/round-03-safety-and-visual-proof.md
+evals/repository/reports/round-04-two-audiences.md
 llms.txt
 test_public_alpha.py
