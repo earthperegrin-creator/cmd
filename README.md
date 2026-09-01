@@ -5,9 +5,7 @@
 ![Local first](https://img.shields.io/badge/data-local--first-17191e)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-7356a8)](LICENSE)
 
-## For you, the human
-
-**Google Tasks for the agent age.**
+## CMD is Google Tasks for the agent age.**
 
 Agent chats are terrible at organizing work.
 
